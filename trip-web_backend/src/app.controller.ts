@@ -11,5 +11,5 @@ export class AppController {
   }
 
   // test 주석
-  // notion 테스트
+  // notion 테스트2
 }
