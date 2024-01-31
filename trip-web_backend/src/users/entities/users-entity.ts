@@ -14,9 +14,9 @@ export class UsersEntity extends BaseEntity{
     @Column({type: 'nvarchar', length: 20})
     nickname: string;
 
-    @CreateDateColumn({type: 'nvarchar', length: 20})
-    created_at: string;
+    @CreateDateColumn()
+    created_at: Date;
 
-    @Column({type: 'nvarchar', length: 20, nullable: true})
+    @Column({type: 'nvarchar', length: 100, nullable: true})
     profile_img: string;
 }
