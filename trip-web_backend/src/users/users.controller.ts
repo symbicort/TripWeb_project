@@ -1,13 +1,19 @@
-import { Controller, Get, Query } from '@nestjs/common';
+import { Body, Controller, Get, Post, Query } from '@nestjs/common';
 import { UsersService } from './users.service';
+import { userDto } from './dto/user.dto';
 
-@Controller('users')
+@Controller('user')
 export class UsersController {
     constructor(private userService: UsersService){}
 
-    @Get('/check')
-        checkIDExist(@Query('id') id: string):any{
-            return this.userService.checkIDExist(id)
+    @Post('/check')
+        async checkIDExist(@Body('id') id: string):Promise<boolean>{
+            return await this.userService.checkIDExist(id)
         }
     
+    @Post('/register')
+        async userRegister(@Body() data: userDto):Promise<boolean>{
+            
+        }
+
 }

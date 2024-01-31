@@ -15,9 +15,13 @@ export class UsersService {
 
     // }
 
-    checkIDExist(userId: string):any{
-        const result = this.usersDB.find({where: {user_id: userId}});
+    async checkIDExist(userId: string): Promise<boolean>{
+        const result = await this.usersDB.findOne({where: {user_id: userId}});
 
-        console.log(result);
+        if(result){
+            return true;
+        } else{
+            return false;
+        }
     }
 }
