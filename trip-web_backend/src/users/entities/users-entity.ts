@@ -1,8 +1,8 @@
-import { BaseEntity, Column, CreateDateColumn, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { BaseEntity, Column, CreateDateColumn, Entity, PrimaryColumn, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity('Users')
 export class UsersEntity extends BaseEntity{
-    @PrimaryGeneratedColumn()
+    @PrimaryColumn()
     user_id: string;
 
     @Column({type: 'nvarchar', length: 20})

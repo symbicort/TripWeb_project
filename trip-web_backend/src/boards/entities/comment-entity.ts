@@ -1,7 +1,7 @@
 import { BaseEntity, Column, CreateDateColumn, Entity, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity('comments')
-export class UsersEntity extends BaseEntity{
+export class CommentEntity extends BaseEntity{
     @PrimaryGeneratedColumn()
     id: string;
 
