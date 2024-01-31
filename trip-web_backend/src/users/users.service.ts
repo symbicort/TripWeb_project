@@ -3,6 +3,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { UsersEntity } from './entities/users-entity';
 import { User } from './users.model';
+import { hashPW } from 'src/utils/crypto';
+import { userDto } from './dto/user.dto';
 
 @Injectable()
 export class UsersService {
@@ -11,9 +13,24 @@ export class UsersService {
         @InjectRepository(UsersEntity) private usersDB: Repository<UsersEntity>
     ){}
 
-    // async signUp(registerInfo: User){
+    async signUp(registerInfo: User):Promise<void>{
+        const {user_id, email, nickname, created_at, profile_img} = registerInfo 
 
-    // }
+        const password = hashPW(registerInfo.password)
+
+        console.log(typeof(password));
+
+        const register = await this.usersDB.save({
+            user_id,
+            password,
+            email,
+            nickname,
+            created_at,
+            profile_img,
+        });
+        console.log('회원가입 정보 리턴', register)
+
+    }   
 
     async checkIDExist(userId: string): Promise<boolean>{
         const result = await this.usersDB.findOne({where: {user_id: userId}});

@@ -5,7 +5,7 @@ export class UsersEntity extends BaseEntity{
     @PrimaryColumn()
     user_id: string;
 
-    @Column({type: 'nvarchar', length: 20})
+    @Column({type: 'nvarchar', length: 100})
     password: string;
 
     @Column({type: 'nvarchar', length: 30})

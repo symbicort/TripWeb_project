@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, Query } from '@nestjs/common';
+import { Body, Controller, Get, Post, Put, Query } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { userDto } from './dto/user.dto';
 
@@ -12,8 +12,8 @@ export class UsersController {
         }
     
     @Post('/register')
-        async userRegister(@Body() data: userDto):Promise<boolean>{
-            
+        async userRegister(@Body() data: userDto):Promise<void>{
+            await this.userService.signUp(data);
         }
 
 }
