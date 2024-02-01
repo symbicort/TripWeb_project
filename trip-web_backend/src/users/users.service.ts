@@ -13,12 +13,10 @@ export class UsersService {
         @InjectRepository(UsersEntity) private usersDB: Repository<UsersEntity>
     ){}
 
-    async signUp(registerInfo: User):Promise<void>{
+    async signUp(registerInfo: User):Promise<string>{
         const {user_id, email, nickname, created_at, profile_img} = registerInfo 
 
         const password = hashPW(registerInfo.password)
-
-        console.log(typeof(password));
 
         const register = await this.usersDB.save({
             user_id,
@@ -28,8 +26,10 @@ export class UsersService {
             created_at,
             profile_img,
         });
+
         console.log('회원가입 정보 리턴', register)
 
+        return register.user_id;
     }   
 
     async checkIDExist(userId: string): Promise<boolean>{

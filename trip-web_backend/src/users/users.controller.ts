@@ -12,8 +12,8 @@ export class UsersController {
         }
     
     @Post('/register')
-        async userRegister(@Body() data: userDto):Promise<void>{
-            await this.userService.signUp(data);
+        async userRegister(@Body() data: userDto):Promise<string>{
+            return await this.userService.signUp(data);
         }
 
 }
