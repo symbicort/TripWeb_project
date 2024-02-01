@@ -27,7 +27,7 @@ export class UsersService {
             profile_img,
         });
 
-        console.log('회원가입 정보 리턴', register)
+        console.log('회원가입 정보 리턴3', register)
 
         return register.user_id;
     }   
