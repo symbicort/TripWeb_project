@@ -7,6 +7,8 @@ import { mysqlConfig } from './config/mysql.config';
 import { BoardsEntity } from './boards/entities/board-entity';
 import { UsersEntity } from './users/entities/users-entity';
 import { CommentEntity } from './boards/entities/comment-entity';
+import { AuthModule } from './auth/auth.module';
+
 
 @Module({
   imports: [ConfigModule.forRoot({
@@ -23,7 +25,7 @@ import { CommentEntity } from './boards/entities/comment-entity';
     entities: [UsersEntity, BoardsEntity, CommentEntity],
     synchronize: true
 }),
-  UserModule, BoardsModule],
+  UserModule, BoardsModule, AuthModule],
   controllers: [],
   providers: [],
 })

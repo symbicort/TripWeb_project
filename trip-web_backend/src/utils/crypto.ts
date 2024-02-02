@@ -1,12 +1,15 @@
-import * as bcrypt from 'bcrypt';
+import { genSaltSync, hashSync, compareSync } from 'bcrypt';
 
 export function hashPW(password: string): string {
+    console.log(process.env.PASSWORD_SALT, password)
     const saltRounds: number = Number(process.env.PASSWORD_SALT);
-    const salt: string = bcrypt.genSaltSync(saltRounds);
-    return bcrypt.hashSync(password, salt);
+    const salt = genSaltSync(saltRounds);
+    console.log(salt)
+    return hashSync(password, salt);
 }
 
 export function comparePW(password: string, hashedPW: string): boolean {
     console.log(hashedPW);
-    return bcrypt.compareSync(password, hashedPW);
+    return compareSync(password, hashedPW);
 }
+
