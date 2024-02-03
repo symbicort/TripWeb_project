@@ -8,12 +8,8 @@ import { PassportModule } from '@nestjs/passport';
 import { JwtModule } from '@nestjs/jwt';
 
 @Module({
-  imports: [PassportModule.register({defaultStrategy: 'jwt'}),
-  JwtModule.register({
+  imports: [JwtModule.register({
     secret: String(process.env.JWT_SECRET_KEY),
-    signOptions: {
-      expiresIn: 60*60
-    }
   }),TypeOrmModule.forFeature([UsersEntity])],
   providers: [UsersService],
   controllers: [UsersController]
@@ -22,3 +18,5 @@ import { JwtModule } from '@nestjs/jwt';
 
 
 export class UserModule {}
+
+console.log('secret key check', process.env.JWT_SECRET_KEY)

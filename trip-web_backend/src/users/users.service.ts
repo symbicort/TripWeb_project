@@ -1,11 +1,11 @@
-import { Injectable, Post, UnauthorizedException } from '@nestjs/common';
+import { Injectable, Post, Res, UnauthorizedException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { QueryFailedError, Repository } from 'typeorm';
 import { UsersEntity } from './entities/users-entity';
-import { User } from './users.model';
 import { hashPW, comparePW } from 'src/utils/crypto';
-import { userDto, loginDto, loginResultDto } from './dto/user.dto';
+import { userDto, loginDto, loginResultDto, jwtPayloadDto } from './dto/user.dto';
 import { JwtService } from '@nestjs/jwt';
+import { randomKey } from 'src/utils/makeKey';
 
 @Injectable()
 export class UsersService {
@@ -15,48 +15,45 @@ export class UsersService {
         private jwtService: JwtService
     ){}
 
-    async signUp(registerInfo: User):Promise<string>{
-        const {user_id, email, nickname, created_at, profile_img} = registerInfo 
+    async signUp(registerInfo: userDto):Promise<any>{
+        const {email, nickname, created_at, profile_img} = registerInfo 
 
         const password = hashPW(registerInfo.password)
 
-        const register = await this.usersDB.save({
-            user_id,
-            password,
-            email,
-            nickname,
-            created_at,
-            profile_img,
-        });
-            return register.user_id;
+        try{
+            const register = await this.usersDB.insert({
+                email,
+                nickname,
+                password,
+                created_at,
+                profile_img,
+            });
+
+            return {result: true, nickname: nickname}
+        }catch(err){
+            if(err instanceof QueryFailedError){
+                const dupcol = err.message.split("'")
+                return {result: false, dupcol: dupcol[1]}
+            }
+            throw new err;
+        }
     }   
 
-    async checkIDExist(userId: string): Promise<boolean>{
-        const result = await this.usersDB.findOne({where: {user_id: userId}});
-
-        if(result){
-            return true;
-        } else{
-            return false;
-        }
-    }
-
     async login(data: loginDto): Promise<loginResultDto>{
-        const {id, pw} = data;
+        const {email, pw} = data;
 
-        const idValid = await this.usersDB.findOne({where: {user_id: id}});
+        const emailValid = await this.usersDB.findOne({where: {email: email}});
 
-        if(idValid){
-            const validPW: boolean = comparePW(pw, idValid.password)
+        if(emailValid){
+            const validPW: boolean = comparePW(pw, emailValid.password)
             if(validPW){
-                console.log(idValid.nickname);
+                const connectKey = randomKey();
 
-                const userId = idValid.user_id
+                const payload: jwtPayloadDto = { 'loginkey' : connectKey };
 
-                const payload: object = { userId};
-                const accessToken = this.jwtService.sign(payload);
+                const token = this.jwtService.sign(payload);
 
-                return {result: true, msg: accessToken}
+                return {result: true, msg: '로그인 성공', token: token}
             } else{
                 return {result: false, msg: '비밀번호가 일치하지 않습니다'};
             }
