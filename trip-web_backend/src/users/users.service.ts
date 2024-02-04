@@ -1,4 +1,4 @@
-import { Injectable, Post, Res, UnauthorizedException } from '@nestjs/common';
+import { Injectable, Post, Res, UnauthorizedException, Inject } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { QueryFailedError, Repository } from 'typeorm';
 import { UsersEntity } from './entities/users-entity';
@@ -6,13 +6,15 @@ import { hashPW, comparePW } from 'src/utils/crypto';
 import { userDto, loginDto, loginResultDto, jwtPayloadDto } from './dto/user.dto';
 import { JwtService } from '@nestjs/jwt';
 import { randomKey } from 'src/utils/makeKey';
+import { RedisClient } from './redis.provider';
+import { resourceUsage } from 'process';
 
 @Injectable()
 export class UsersService {
-    constructor(
-        // typeorm 엔티티를 통한 repository 선언
+    constructor(@Inject('REDIS_CLIENT')
+    private readonly redis: RedisClient,
         @InjectRepository(UsersEntity) private usersDB: Repository<UsersEntity>,
-        private jwtService: JwtService
+        private jwtService: JwtService, 
     ){}
 
     async signUp(registerInfo: userDto):Promise<any>{
@@ -40,28 +42,58 @@ export class UsersService {
     }   
 
     async login(data: loginDto): Promise<loginResultDto>{
-        const {email, pw} = data;
+        try{
+            const {email, pw} = data;
 
-        const emailValid = await this.usersDB.findOne({where: {email: email}});
+            const emailValid = await this.usersDB.findOne({where: {email: email}});
 
-        if(emailValid){
-            const validPW: boolean = comparePW(pw, emailValid.password)
-            if(validPW){
-                const connectKey = randomKey();
+            if(emailValid){
+                const validPW: boolean = comparePW(pw, emailValid.password)
+                if(validPW){
+                    const connectKey = randomKey();
 
-                const payload: jwtPayloadDto = { 'loginkey' : connectKey };
+                    const payload: jwtPayloadDto = { 'loginkey' : connectKey };
 
-                const token = this.jwtService.sign(payload);
+                    const loginToken = this.jwtService.sign(payload);
 
-                return {result: true, msg: '로그인 성공', token: token}
+                    await this.redis.set(connectKey, emailValid.email, 'EX',604800)
+
+                    return {result: true, msg: '로그인 성공', token: loginToken}
+                } else{
+                    return {result: false, msg: '비밀번호가 일치하지 않습니다'};
+                }
             } else{
-                return {result: false, msg: '비밀번호가 일치하지 않습니다'};
-            }
-            
-        } else{
-            // return {result: false, msg: "아이디가 존재하지 않습니다."};
-            throw new UnauthorizedException('login failed');
-        }
+                return {result: false, msg: "아이디가 존재하지 않습니다."};
+                // throw new UnauthorizedException('login failed');
+        }}catch(err){
+            console.error(err)
+        }}
+    async logout(logintoken: string): Promise<boolean>{
+        try{
+            const loginKey = this.jwtService.verify(logintoken).loginkey
 
-    }
+            const logoutRes = await this.redis.del(loginKey)
+
+            if(logoutRes){
+                return true;
+            }else{
+                return false;
+            }
+        }catch(err){
+            console.error(`during logout err.... ${err}`)
+        }
+    } 
+    async authUser(logintoken: string): Promise<any>{
+        try{
+            const loginKey = this.jwtService.verify(logintoken).loginkey
+
+            const loginEmail = await this.redis.get(loginKey)
+
+            const emailValid = await this.usersDB.findOne({where: {email: loginEmail}});
+
+            return emailValid
+        }catch(err){
+            console.error(`during logout err.... ${err}`)
+        }
+    } 
 }

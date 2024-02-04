@@ -8,6 +8,8 @@ import { BoardsEntity } from './boards/entities/board-entity';
 import { UsersEntity } from './users/entities/users-entity';
 import { CommentEntity } from './boards/entities/comment-entity';
 import { AuthModule } from './auth/auth.module';
+// import { RedisModule } from '@liaoliaots/nestjs-redis';
+import { RedisModules } from 'redis';
 
 
 @Module({
@@ -24,8 +26,7 @@ import { AuthModule } from './auth/auth.module';
     database: process.env.RDS_MYSQL_NAME,
     entities: [UsersEntity, BoardsEntity, CommentEntity],
     synchronize: true
-}),
-  UserModule, BoardsModule, AuthModule],
+}),UserModule, BoardsModule, AuthModule],
   controllers: [],
   providers: [],
 })

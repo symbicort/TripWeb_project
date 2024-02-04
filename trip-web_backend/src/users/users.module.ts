@@ -6,12 +6,15 @@ import { UsersEntity } from './entities/users-entity';
 import { ConfigService } from '@nestjs/config';
 import { PassportModule } from '@nestjs/passport';
 import { JwtModule } from '@nestjs/jwt';
+// import { RedisModule } from '@liaoliaots/nestjs-redis';
+import { RedisModules } from 'redis';
+import { redisProvider } from './redis.provider';
 
 @Module({
   imports: [JwtModule.register({
     secret: String(process.env.JWT_SECRET_KEY),
   }),TypeOrmModule.forFeature([UsersEntity])],
-  providers: [UsersService],
+  providers: [UsersService, redisProvider],
   controllers: [UsersController]
 })
 

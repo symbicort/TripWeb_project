@@ -1,4 +1,5 @@
 import { Matches } from "class-validator";
+import { boolean } from "joi";
 
 export class userDto{
     email: string;
@@ -28,3 +29,8 @@ export class loginKeyDto{
 export interface jwtPayloadDto{
     [key: string]: string 
 };
+
+export interface userCheckDto{
+    result: boolean;
+    msg? : string
+}

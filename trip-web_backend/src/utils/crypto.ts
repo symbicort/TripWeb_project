@@ -9,7 +9,6 @@ export function hashPW(password: string): string {
 }
 
 export function comparePW(password: string, hashedPW: string): boolean {
-    console.log(hashedPW);
     return compareSync(password, hashedPW);
 }
 
