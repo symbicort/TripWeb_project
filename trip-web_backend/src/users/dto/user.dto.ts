@@ -8,7 +8,7 @@ export class userDto{
         message: '영어, 특수문자, 숫자만 입력이 가능합니다.'})
     password: string;
     created_at: Date;
-    profile_img: undefined | string;
+    profile_img?: string;
 }
 
 export class loginDto{
@@ -16,7 +16,7 @@ export class loginDto{
     pw: string;
 }
 
-export class loginResultDto{
+export class ResultDto{
     result: boolean;
     msg: string;
     token? :string
@@ -30,7 +30,15 @@ export interface jwtPayloadDto{
     [key: string]: string 
 };
 
-export interface userCheckDto{
-    result: boolean;
-    msg? : string
+export interface userInfoDto{
+    email: string;
+    nickname: string;
+    profile_img?: string;
+}
+
+export interface editUserInfo{
+    email: string;
+    nickname: string;
+    original_password: string;
+    new_password?: string;
 }

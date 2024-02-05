@@ -3,18 +3,18 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { QueryFailedError, Repository } from 'typeorm';
 import { UsersEntity } from './entities/users-entity';
 import { hashPW, comparePW } from 'src/utils/crypto';
-import { userDto, loginDto, loginResultDto, jwtPayloadDto } from './dto/user.dto';
+import { userDto, loginDto, ResultDto, jwtPayloadDto, userInfoDto, editUserInfo } from './dto/user.dto';
 import { JwtService } from '@nestjs/jwt';
 import { randomKey } from 'src/utils/makeKey';
 import { RedisClient } from './redis.provider';
-import { resourceUsage } from 'process';
+import { TokenService } from './token.service';
 
 @Injectable()
 export class UsersService {
     constructor(@Inject('REDIS_CLIENT')
     private readonly redis: RedisClient,
         @InjectRepository(UsersEntity) private usersDB: Repository<UsersEntity>,
-        private jwtService: JwtService, 
+        private readonly jwtService: JwtService, private readonly tokenService: TokenService
     ){}
 
     async signUp(registerInfo: userDto):Promise<any>{
@@ -41,7 +41,7 @@ export class UsersService {
         }
     }   
 
-    async login(data: loginDto): Promise<loginResultDto>{
+    async login(data: loginDto): Promise<ResultDto>{
         try{
             const {email, pw} = data;
 
@@ -63,11 +63,12 @@ export class UsersService {
                     return {result: false, msg: '비밀번호가 일치하지 않습니다'};
                 }
             } else{
-                return {result: false, msg: "아이디가 존재하지 않습니다."};
+                return {result: false, msg: "가입된 이메일이 존재하지 않습니다."};
                 // throw new UnauthorizedException('login failed');
         }}catch(err){
             console.error(err)
         }}
+
     async logout(logintoken: string): Promise<boolean>{
         try{
             const loginKey = this.jwtService.verify(logintoken).loginkey
@@ -83,17 +84,75 @@ export class UsersService {
             console.error(`during logout err.... ${err}`)
         }
     } 
-    async authUser(logintoken: string): Promise<any>{
-        try{
-            const loginKey = this.jwtService.verify(logintoken).loginkey
 
-            const loginEmail = await this.redis.get(loginKey)
+    async authUser(logintoken: string): Promise<string>{
+        try{
+            const loginEmail = await this.tokenService.getEmailFromToken(logintoken);
+
+            const emailValid = await this.usersDB.findOne({where: {email: loginEmail}});
+
+            return emailValid.nickname
+        }catch(err){
+            console.error(`during logout err.... ${err}`)
+        }
+    } 
+
+    async getUserInfo(logintoken: string): Promise<userInfoDto>{
+        try{
+            const loginEmail = await this.tokenService.getEmailFromToken(logintoken);
 
             const emailValid = await this.usersDB.findOne({where: {email: loginEmail}});
 
             return emailValid
         }catch(err){
-            console.error(`during logout err.... ${err}`)
+            console.error(`during get user info err.... ${err}`)
         }
     } 
+
+    async updateUserInfo(logintoken: string, data: editUserInfo): Promise<ResultDto>{
+        const {email, nickname, original_password} = data;
+
+        try{
+            const emailValid = await this.usersDB.findOne({where: {email: email}});
+
+            if(emailValid){
+                const validPW: boolean = comparePW(original_password, emailValid.password)
+
+                if(validPW){
+                    const nicknameValid = await this.usersDB.findOne({where: {nickname: nickname}})
+
+                    console.log('nicknamevalid', nicknameValid)
+
+                    if(!nicknameValid){
+                        if(data.new_password){
+                            const password = hashPW(data.new_password);
+
+                            const userUpdate = await this.usersDB.update({email: email}, {nickname: nickname, password: password}, )
+
+                            console.log('new passwr',userUpdate)
+                        } else{
+                            const userUpdate = await this.usersDB.update({email: email}, {nickname: nickname, password: emailValid.password})
+
+                            console.log('origin passwd', userUpdate)
+                        }
+                        const loginKey = this.jwtService.verify(logintoken).loginkey
+
+                        const logoutRes = await this.redis.del(loginKey)
+
+                        return {result: true, msg: '정보가 성공적으로 변경되었습니다.'}
+
+                    } else{
+                        return {result: false, msg: '중복된 닉네임으로 변경이 불가능합니다.'};
+                    }
+                } else{
+                    return {result: false, msg: '비밀번호가 일치하지 않습니다'};
+                }
+            } else{
+                return {result: false, msg: "이메일이 존재하지 않습니다."};
+                // throw new UnauthorizedException('login failed');
+        }
+        } catch(err){
+            console.error(err);
+        }
+    }
 }

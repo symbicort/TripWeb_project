@@ -1,6 +1,6 @@
-import { Body, Controller, Get, Post, Put, Query, Req, Res, ValidationPipe } from '@nestjs/common';
+import { Body, Controller, Get, Patch, Post, Put, Query, Req, Res, ValidationPipe } from '@nestjs/common';
 import { UsersService } from './users.service';
-import { userDto, loginDto, loginResultDto } from './dto/user.dto';
+import { userDto, loginDto, ResultDto, userInfoDto, editUserInfo } from './dto/user.dto';
 import { Response, Request } from 'express';
 
 @Controller('user')
@@ -59,6 +59,7 @@ export class UsersController {
                 console.error(err)
             }
         }
+
     @Get('/authuser')
     async authuser(@Req() req:Request, @Res() res:Response): Promise<void> {
         try{
@@ -67,7 +68,7 @@ export class UsersController {
             if(logintoken){
                 const result = await this.userService.authUser(logintoken)
 
-                res.send({result: true, msg: result.nickname})
+                res.send({result: true, msg: result})
             }else{
                 res.send({result: false, msg: '로그인 상태가 아닙니다'})
             }
@@ -75,4 +76,42 @@ export class UsersController {
             console.error(err)
         }
     }
+
+    @Get('/user_info')
+    async getUserInfo(@Req() req:Request, @Res() res:Response): Promise<void> {
+        try{
+            const logintoken = req.cookies.userKey;
+
+            if(logintoken){
+                const result = await this.userService.getUserInfo(logintoken)
+
+                res.send({result: true, email: result.email, nickname: result.nickname, profile_img: result.profile_img})
+            } else{
+                res.send({result: false, msg: '로그인 상태가 아닙니다'})
+            }
+        }catch(err){
+            console.error(err)
+        }
+    }
+
+    @Patch('/user_info')
+    async editUserInfo(@Body() data: editUserInfo, @Req() req:Request, @Res() res:Response): Promise<void>{
+        try{
+            const logintoken = req.cookies.userKey;
+
+            if(logintoken){
+                const result = await this.userService.updateUserInfo(logintoken, data)
+
+                res.clearCookie('userKey')
+
+                res.send(result)
+            } else{
+                res.send({result: false, msg: '로그인 상태가 아닙니다'})
+            }
+        }catch(err){
+            console.error(err)
+        } 
+    }
+
+    
 }

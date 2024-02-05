@@ -10,6 +10,7 @@ import { CommentEntity } from './boards/entities/comment-entity';
 import { AuthModule } from './auth/auth.module';
 // import { RedisModule } from '@liaoliaots/nestjs-redis';
 import { RedisModules } from 'redis';
+import { AwsModule } from './aws/aws.module';
 
 
 @Module({
@@ -26,7 +27,7 @@ import { RedisModules } from 'redis';
     database: process.env.RDS_MYSQL_NAME,
     entities: [UsersEntity, BoardsEntity, CommentEntity],
     synchronize: true
-}),UserModule, BoardsModule, AuthModule],
+}),UserModule, BoardsModule, AuthModule, AwsModule],
   controllers: [],
   providers: [],
 })
