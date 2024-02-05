@@ -155,4 +155,23 @@ export class UsersService {
             console.error(err);
         }
     }
+
+    async withDraw(logintoken: string): Promise<ResultDto>{
+        try{
+            const loginKey = this.jwtService.verify(logintoken).loginkey
+
+            const userEmail = await this.redis.get(loginKey)
+
+            const result = await this.usersDB.delete({email: userEmail})
+
+            if(result.affected){
+                const delKeyRedis = await this.redis.del(loginKey)
+
+                return {result: true, msg: '회원탈퇴가 완료되었습니다.'}
+            }
+
+        }catch(err){
+            console.error(`during withdraw err.... ${err}`)
+        }
+    } 
 }

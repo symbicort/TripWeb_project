@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Patch, Post, Put, Query, Req, Res, ValidationPipe } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Patch, Post, Put, Query, Req, Res, ValidationPipe } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { userDto, loginDto, ResultDto, userInfoDto, editUserInfo } from './dto/user.dto';
 import { Response, Request } from 'express';
@@ -113,5 +113,26 @@ export class UsersController {
         } 
     }
 
-    
+    @Delete('/withDraw')
+    async withDraw(@Req() req:Request, @Res() res:Response): Promise<void> {
+        try{
+            const logintoken = req.cookies.userKey;
+
+            if(logintoken){
+                const result = await this.userService.withDraw(logintoken)
+
+                if(result){
+                    res.clearCookie('userKey')
+                    
+                    res.send({result: true})
+                }else{
+                    res.send({result: false, msg: 'redis 내 키가 존재하지 않음'})
+                }
+            }else{
+                res.send({result: false, msg: '로그인 상태가 아닙니다'})
+            }
+        }catch(err){
+            console.error(err)
+        }
+    }   
 }
