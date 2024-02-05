@@ -1,3 +1,1 @@
-export class CreateBoardDto{
-    
-}
+export class CreateBoardDto {}

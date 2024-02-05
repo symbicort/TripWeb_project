@@ -12,22 +12,28 @@ import { AuthModule } from './auth/auth.module';
 import { RedisModules } from 'redis';
 import { AwsModule } from './aws/aws.module';
 
-
 @Module({
-  imports: [ConfigModule.forRoot({
-    isGlobal: true,
-    cache: true,
-    envFilePath: '.env',
-  }), TypeOrmModule.forRoot({
-    type: 'mysql',
-    host: process.env.RDS_MYSQL_HOST,
-    port: Number(process.env.RDS_MYSQL_PORT),
-    username: process.env.RDS_MYSQL_USERNAME,
-    password: process.env.RDS_MYSQL_PW,
-    database: process.env.RDS_MYSQL_NAME,
-    entities: [UsersEntity, BoardsEntity, CommentEntity],
-    synchronize: true
-}),UserModule, BoardsModule, AuthModule, AwsModule],
+  imports: [
+    ConfigModule.forRoot({
+      isGlobal: true,
+      cache: true,
+      envFilePath: '.env',
+    }),
+    TypeOrmModule.forRoot({
+      type: 'mysql',
+      host: process.env.RDS_MYSQL_HOST,
+      port: Number(process.env.RDS_MYSQL_PORT),
+      username: process.env.RDS_MYSQL_USERNAME,
+      password: process.env.RDS_MYSQL_PW,
+      database: process.env.RDS_MYSQL_NAME,
+      entities: [UsersEntity, BoardsEntity, CommentEntity],
+      synchronize: true,
+    }),
+    UserModule,
+    BoardsModule,
+    AuthModule,
+    AwsModule,
+  ],
   controllers: [],
   providers: [],
 })

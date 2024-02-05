@@ -6,6 +6,6 @@ import { ConfigModule } from '@nestjs/config';
   controllers: [AwsController],
   providers: [],
   exports: [],
-  imports: [ConfigModule]
+  imports: [ConfigModule],
 })
 export class AwsModule {}
