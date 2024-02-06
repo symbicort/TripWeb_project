@@ -1,10 +1,4 @@
-import {
-  Injectable,
-  Post,
-  Res,
-  UnauthorizedException,
-  Inject,
-} from '@nestjs/common';
+import { Injectable, Inject } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { QueryFailedError, Repository } from 'typeorm';
 import { UsersEntity } from './entities/users-entity';
@@ -38,7 +32,7 @@ export class UsersService {
     const password = hashPW(registerInfo.password);
 
     try {
-      const register = await this.usersDB.insert({
+      await this.usersDB.insert({
         email,
         nickname,
         password,
@@ -143,54 +137,49 @@ export class UsersService {
         where: { email: email },
       });
 
-      if (emailValid) {
-        const validPW: boolean = comparePW(
-          original_password,
-          emailValid.password,
-        );
-
-        if (validPW) {
-          const nicknameValid = await this.usersDB.findOne({
-            where: { nickname: nickname },
-          });
-
-          console.log('nicknamevalid', nicknameValid);
-
-          if (!nicknameValid) {
-            if (data.new_password) {
-              const password = hashPW(data.new_password);
-
-              const userUpdate = await this.usersDB.update(
-                { email: email },
-                { nickname: nickname, password: password },
-              );
-
-              console.log('new passwr', userUpdate);
-            } else {
-              const userUpdate = await this.usersDB.update(
-                { email: email },
-                { nickname: nickname, password: emailValid.password },
-              );
-
-              console.log('origin passwd', userUpdate);
-            }
-            const loginKey = this.jwtService.verify(loginToken).loginkey;
-
-            await this.redis.del(loginKey);
-
-            return { result: true, msg: '정보가 성공적으로 변경되었습니다.' };
-          } else {
-            return {
-              result: false,
-              msg: '중복된 닉네임으로 변경이 불가능합니다.',
-            };
-          }
-        } else {
-          return { result: false, msg: '비밀번호가 일치하지 않습니다' };
-        }
-      } else {
+      if (!emailValid) {
         return { result: false, msg: '이메일이 존재하지 않습니다.' };
       }
+
+      const validPW: boolean = comparePW(
+        original_password,
+        emailValid.password,
+      );
+
+      if (!validPW) {
+        return { result: false, msg: '비밀번호가 일치하지 않습니다' };
+      }
+
+      const nicknameValid = await this.usersDB.findOne({
+        where: { nickname: nickname },
+      });
+
+      if (!nicknameValid) {
+        return {
+          result: false,
+          msg: '중복된 닉네임으로 변경이 불가능합니다.',
+        };
+      }
+
+      if (data.new_password) {
+        const password = hashPW(data.new_password);
+
+        await this.usersDB.update(
+          { email: email },
+          { nickname: nickname, password: password },
+        );
+      } else {
+        await this.usersDB.update(
+          { email: email },
+          { nickname: nickname, password: emailValid.password },
+        );
+      }
+
+      const loginKey = this.jwtService.verify(loginToken).loginkey;
+
+      await this.redis.del(loginKey);
+
+      return { result: true, msg: '정보가 성공적으로 변경되었습니다.' };
     } catch (err) {
       throw new err();
     }
@@ -205,7 +194,7 @@ export class UsersService {
       const result = await this.usersDB.delete({ email: userEmail });
 
       if (result.affected) {
-        const delKeyRedis = await this.redis.del(loginKey);
+        await this.redis.del(loginKey);
 
         return { result: true, msg: '회원탈퇴가 완료되었습니다.' };
       }

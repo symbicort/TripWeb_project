@@ -5,20 +5,12 @@ import {
   Get,
   Patch,
   Post,
-  Put,
-  Query,
   Req,
   Res,
   ValidationPipe,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
-import {
-  userDto,
-  loginDto,
-  ResultDto,
-  userInfoDto,
-  editUserInfo,
-} from './dto/user.dto';
+import { userDto, loginDto, editUserInfo } from './dto/user.dto';
 import { Response, Request } from 'express';
 
 @Controller('user')
