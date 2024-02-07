@@ -1,6 +1,5 @@
 import { Body, Controller, Get, Post } from '@nestjs/common';
 import { BoardsService } from './boards.service';
-import { Board } from './boards.model';
 import { ConfigService } from '@nestjs/config';
 
 @Controller('boards')
