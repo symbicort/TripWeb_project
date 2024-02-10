@@ -1,10 +1,21 @@
-import Main from "./page/Main";
+import { Route, Routes } from 'react-router-dom';
+import Main from './page/Main';
 
 function App() {
+ 
+
   return (
     <>
-      <Main/>
+      <Routes>
+      <Route path="/" element={<Main />} />
+      </Routes>
     </>
+    
+      
+
+
+    
+ 
   );
 }
 

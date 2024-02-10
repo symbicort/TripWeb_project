@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import styled, { keyframes } from 'styled-components';
+import {authUiActions} from '../store/features/authUi'
+import {useSelector, useDispatch} from 'react-redux';
 import logo from '../assets/logo.png';
 
 const slideIn = keyframes`
@@ -111,11 +113,21 @@ const Icon = styled.span`
 `;
 
 const Header = () => {
+  const dispatch = useDispatch()
   const [menuOpen, setMenuOpen] = useState(false);
 
   const toggleMenu = () => {
     setMenuOpen(!menuOpen);
   };
+
+  const isAuth = useSelector((state)=>state.authUi.isAuthState);
+
+  const logoutHandler = (e) =>{
+    e.preventDefault();
+    
+    dispatch(authUiActions.logout())
+  }
+
 
   return (
     <NavContainer>
@@ -136,7 +148,24 @@ const Header = () => {
         <MenuItem>About</MenuItem>
         <MenuItem>Contact</MenuItem>
       </Menu>
-      <LoginButton>Login</LoginButton>
+      {
+        isAuth ? (
+          <nav>
+          <ul>
+            <li>
+              <a href='/'>My Products</a>
+            </li>
+            <li>
+              <a href='/'>My Sales</a>
+            </li>
+            <li>
+              <button onClick={logoutHandler}>Logout</button>
+            </li>
+          </ul>
+        </nav>
+       ) : <LoginButton>Login</LoginButton> 
+      }
+      
     </NavContainer>
   );
 };
