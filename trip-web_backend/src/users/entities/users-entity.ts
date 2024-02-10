@@ -12,6 +12,9 @@ import {
 @Unique(['nickname'])
 export class UsersEntity extends BaseEntity {
   @PrimaryColumn({ type: 'nvarchar', length: 30 })
+  user_id: string;
+
+  @Column({ type: 'nvarchar', length: 30 })
   email: string;
 
   @Column({ type: 'nvarchar', length: 20 })
