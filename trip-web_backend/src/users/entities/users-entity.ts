@@ -4,12 +4,9 @@ import {
   CreateDateColumn,
   Entity,
   PrimaryColumn,
-  Unique,
 } from 'typeorm';
 
 @Entity('Users')
-@Unique(['email'])
-@Unique(['nickname'])
 export class UsersEntity extends BaseEntity {
   @PrimaryColumn({ type: 'nvarchar', length: 30 })
   user_id: string;
