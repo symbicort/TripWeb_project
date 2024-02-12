@@ -2,8 +2,10 @@ import {
   BaseEntity,
   Column,
   CreateDateColumn,
+  DeleteDateColumn,
   Entity,
   PrimaryGeneratedColumn,
+  UpdateDateColumn,
 } from 'typeorm';
 
 @Entity('boards')
@@ -22,6 +24,12 @@ export class BoardsEntity extends BaseEntity {
 
   @CreateDateColumn()
   created_at: Date;
+
+  @UpdateDateColumn()
+  updated_at: Date;
+
+  @DeleteDateColumn()
+  deleted_at: Date;
 
   @Column({ nullable: true })
   post_img: string;
