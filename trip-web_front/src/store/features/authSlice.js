@@ -1,7 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { login } from '../../api/authApi'; 
-
-
+import { signup } from '../../api/authApi'; 
 
 const initialState = {
   user: null,
@@ -33,8 +31,7 @@ export const { signupStart, signupSuccess, signupFailure } = authSlice.actions;
 export const signupUser = (userData) => async (dispatch) => {
   try {
     dispatch(signupStart());
-    const user = await login(userData); 
-    console.log('dataForm :', user)
+    const user = await signup(userData); 
     dispatch(signupSuccess(user));
   } catch (error) {
     dispatch(signupFailure(error));

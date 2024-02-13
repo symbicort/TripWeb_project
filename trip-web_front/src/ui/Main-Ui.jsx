@@ -1,5 +1,5 @@
 import visual from '../assets/visual.jpg'
-import {CORE_CONCEPTS, EXAMPLES} from '../../util/mainList'
+import {CORE_CONCEPTS, EXAMPLES} from '../util/mainList'
 
 import '../styles/MainUi.css'
 

@@ -1,118 +1,128 @@
-import { useState } from "react";
-import '../styles/Auth.css'
-
+import { useState } from 'react';
+import { useDispatch } from 'react-redux';
+import { signupUser } from '../store/features/authSlice';
+import { isValidEmail, isNotEmpty, hasMinLength, hasMaxLength, isEqualsToOtherValue } from '../util/vailidation'; 
+import '../styles/Auth.css';
 
 const Signup = () => {
-  const [passwordAreNotEqual,setPasswordAreNotEqual] = useState(false)
+  const dispatch = useDispatch();
+  const [formData, setFormData] = useState({
+    email: '',
+    password: '',
+    confirmPassword: '',
+    fullName: '',
+    terms: false
+  });
+  const [passwordMismatch, setPasswordMismatch] = useState(false);
 
-  function handleSubmit(event){
-    event.preventDefault();
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prevData) => ({
+      ...prevData,
+      [name]: value
+    }));
+  };
 
-   const fd = new FormData(event.target);//제출한 form의 값들을 name : value로 읽어들인다.
-   const data = Object.fromEntries(fd.entries()); //name 값을 불러온다
-  const acquisitionChannel = fd.getAll('acquisition');
-  data.acquisition = acquisitionChannel
-  
-  //[]를 사용한 이유는 - 라는 기호가 들어가있기때문에
-  if(data.password !== data['confirm-password']){
-      setPasswordAreNotEqual(true)  
-    return;
-  }
-  
-  console.log(data)
-  event.target.reset();
-  }
-  
+  const handleCheckboxChange = (e) => {
+    const { name, checked } = e.target;
+    setFormData((prevData) => ({
+      ...prevData,
+      [name]: checked
+    }));
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    // 유효성 검사 수행
+    if (!isValidEmail(formData.email)) {
+      // 이메일 유효성 검사
+      alert('유효한 이메일 주소를 입력하세요.');
+      return;
+    }
+    if (!hasMinLength(formData.password, 6)) {
+      // 비밀번호 최소 길이 검사
+      alert('비밀번호는 최소 6자 이상이어야 합니다.');
+      return;
+    }
+    if (!isEqualsToOtherValue(formData.password, formData.confirmPassword)) {
+      // 비밀번호 일치 검사
+      alert('비밀번호가 일치하지 않습니다.');
+      return;
+    }
+    // 유효성 검사 통과 시 회원가입 요청 전송
+    setPasswordMismatch(false);
+    dispatch(signupUser(formData));
+  };
+
   return (
     <form onSubmit={handleSubmit}>
-      <h2>Welcome on board!</h2>
-      <p>We just need a little bit of data from you to get you started 🚀</p>
+      <h2>어서오고!</h2>
+      <p>로그인 해주세요! 🚀</p>
 
       <div className="control">
-        <label htmlFor="email">Email</label>
-        <input id="email" type="email" name="email" required/>
+        <label htmlFor="email">이메일</label>
+        <input
+          id="email"
+          type="email"
+          name="email"
+          value={formData.email}
+          onChange={handleInputChange}
+          required
+        />
       </div>
 
       <div className="control-row">
         <div className="control">
-          <label htmlFor="password">Password</label>
-          <input id="password" 
-          type="password" 
-          name="password" 
-          required 
-          minLength={6}/>
-        </div>
-
-        <div className="control">
-          <label htmlFor="confirm-password">Confirm Password</label>
+          <label htmlFor="password">비밀번호</label>
           <input
-            id="confirm-password"
+            id="password"
             type="password"
-            name="confirm-password"
+            name="password"
+            value={formData.password}
+            onChange={handleInputChange}
             required
           />
         </div>
-        <div className="control-error">{passwordAreNotEqual && <p>Passwords must match.</p>}</div>
-      </div>
 
-      <hr />
-
-      <div className="control-row">
         <div className="control">
-          <label htmlFor="first-name">First Name</label>
-          <input type="text" id="first-name" name="first-name" required/>
+          <label htmlFor="confirmPassword">비빌번호 확인</label>
+          <input
+            id="confirmPassword"
+            type="password"
+            name="confirmPassword"
+            value={formData.confirmPassword}
+            onChange={handleInputChange}
+            required
+          />
         </div>
 
         <div className="control">
-          <label htmlFor="last-name">Last Name</label>
-          <input type="text" id="last-name" name="last-name" required/>
+          <label htmlFor="fullName">성명</label>
+          <input
+            id="fullName"
+            type="text"
+            name="fullName"
+            value={formData.fullName}
+            onChange={handleInputChange}
+            required
+          />
         </div>
+
+        {passwordMismatch && <p className="control-error">Passwords must match.</p>}
       </div>
+
+      {/* Add other form controls */}
 
       <div className="control">
-        <label htmlFor="phone">What best describes your role?</label>
-        <select id="role" name="role" required>
-          <option value="student">Student</option>
-          <option value="teacher">Teacher</option>
-          <option value="employee">Employee</option>
-          <option value="founder">Founder</option>
-          <option value="other">Other</option>
-        </select>
-      </div>
-
-      {/* checkbox 같은 경우 name을 통일한다 */}
-      <fieldset>
-        <legend>How did you find us?</legend>
-        <div className="control">
+        <label>
           <input
             type="checkbox"
-            id="google"
-            name="acquisition"
-            value="google"
+            name="terms"
+            checked={formData.terms}
+            onChange={handleCheckboxChange}
+            required
           />
-          <label htmlFor="google">Google</label>
-        </div>
-
-        <div className="control">
-          <input
-            type="checkbox"
-            id="friend"
-            name="acquisition"
-            value="friend"
-          />
-          <label htmlFor="friend">Referred by friend</label>
-        </div>
-
-        <div className="control">
-          <input type="checkbox" id="other" name="acquisition" value="other" />
-          <label htmlFor="other">Other</label>
-        </div>
-      </fieldset>
-
-      <div className="control">
-        <label htmlFor="terms-and-conditions">
-          <input type="checkbox" id="terms-and-conditions" name="terms" required/>I
-          agree to the terms and conditions
+          위에 약관에 동의하십니까?
         </label>
       </div>
 
@@ -121,11 +131,11 @@ const Signup = () => {
           Reset
         </button>
         <button type="submit" className="button">
-          Sign up
+          회원가입
         </button>
       </p>
     </form>
   );
-}
+};
 
-export default Signup
+export default Signup;
