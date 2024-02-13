@@ -1,7 +1,7 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
-import { signupUser } from '../store/features/authSlice';
-import { isValidEmail, isNotEmpty, hasMinLength, hasMaxLength, isEqualsToOtherValue } from '../util/vailidation'; 
+import { signupUser } from '../store/features/authSlice'; // 수정된 부분
+import { isValidEmail, isNotEmpty, hasMinLength, hasMaxLength, isEqualsToOtherValue, matchesPattern } from '../util/vailidation';
 import '../styles/Auth.css';
 
 const Signup = () => {
@@ -49,9 +49,25 @@ const Signup = () => {
       alert('비밀번호가 일치하지 않습니다.');
       return;
     }
+    if (!matchesPattern(formData.password, /^(?!.*(.)\1{3})[a-zA-Z\s가-힣]+$/)) {
+      // 성명 패턴 검사 (영문자, 한글, 공백만 허용하고, 연속으로 동일한 문자를 4번 이상 허용하지 않음)
+      alert('연속으로 동일한 문자를 4번 이상 허용하지 않음');
+      return;
+    }
+    if (!isNotEmpty(formData.fullName)) {
+      // 성명이 비어 있는지 검사
+      alert('성명을 입력하세요.');
+      return;
+    }
+    if (!hasMaxLength(formData.fullName, 50)) {
+      // 성명 최대 길이 검사
+      alert('성명은 최대 50자까지 입력 가능합니다.');
+      return;
+    }
+   
     // 유효성 검사 통과 시 회원가입 요청 전송
     setPasswordMismatch(false);
-    dispatch(signupUser(formData));
+    dispatch(signupUser(formData)); // 수정된 부분: signupUser로 변경
   };
 
   return (

@@ -1,5 +1,17 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { signup } from '../../api/authApi'; 
+
+export const signupUserAsync = createAsyncThunk(
+  'auth/signupUser',
+  async (userData, { rejectWithValue }) => {
+    try {
+      const user = await signup(userData);
+      return user;
+    } catch (error) {
+      return rejectWithValue(error);
+    }
+  }
+);
 
 const initialState = {
   user: null,
