@@ -7,15 +7,22 @@ import {
   Post,
   Req,
   Res,
+  UploadedFile,
+  UseInterceptors,
   ValidationPipe,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
-import { userDto, loginDto, editUserInfo } from './dto/user.dto';
+import { userDto, loginDto, editUserInfo, userInfoDto } from './dto/user.dto';
 import { Response, Request } from 'express';
+import { AwsService } from 'src/aws/aws.service';
+import { FileInterceptor } from '@nestjs/platform-express';
 
 @Controller('user')
 export class UsersController {
-  constructor(private userService: UsersService) {}
+  constructor(
+    private userService: UsersService,
+    private readonly awsService: AwsService,
+  ) {}
 
   @Post('/register')
   async userRegister(
@@ -55,21 +62,21 @@ export class UsersController {
     try {
       const logintoken = req.cookies.userKey;
 
-      if (logintoken) {
-        const result = await this.userService.logout(logintoken);
-
-        if (result) {
-          res.clearCookie('userKey');
-
-          res.send({ result: true });
-        } else {
-          res.send({ result: false, msg: 'redis 내 키가 존재하지 않음' });
-        }
-      } else {
+      if (!logintoken) {
         res.send({ result: false, msg: '로그인 상태가 아닙니다' });
       }
+
+      const result = await this.userService.logout(logintoken);
+
+      if (result) {
+        res.clearCookie('userKey');
+
+        res.send({ result: true });
+      } else {
+        res.send({ result: false, msg: 'redis 내 키가 존재하지 않음' });
+      }
     } catch (err) {
-      console.error(err);
+      throw err;
     }
   }
 
@@ -78,28 +85,30 @@ export class UsersController {
     try {
       const logintoken = req.cookies.userKey;
 
-      if (logintoken) {
-        const result = await this.userService.authUser(logintoken);
-
-        res.send({ result: true, msg: result });
-      } else {
+      if (!logintoken) {
         res.send({ result: false, msg: '로그인 상태가 아닙니다' });
       }
+
+      const result = await this.userService.authUser(logintoken);
+
+      res.send({ result: true, msg: result });
     } catch (err) {
-      console.error(err);
+      throw err;
     }
   }
 
-  @Get('/user_info')
+  @Post('/info')
   async getUserInfo(@Req() req: Request, @Res() res: Response): Promise<void> {
     try {
       const logintoken = req.cookies.userKey;
 
       if (logintoken) {
-        const result = await this.userService.getUserInfo(logintoken);
+        const result: userInfoDto =
+          await this.userService.getUserInfo(logintoken);
 
         res.send({
           result: true,
+          userId: result.user_id,
           email: result.email,
           nickname: result.nickname,
           profile_img: result.profile_img,
@@ -108,11 +117,11 @@ export class UsersController {
         res.send({ result: false, msg: '로그인 상태가 아닙니다' });
       }
     } catch (err) {
-      console.error(err);
+      throw err;
     }
   }
 
-  @Patch('/user_info')
+  @Patch('/info')
   async editUserInfo(
     @Body() data: editUserInfo,
     @Req() req: Request,
@@ -131,7 +140,7 @@ export class UsersController {
         res.send({ result: false, msg: '로그인 상태가 아닙니다' });
       }
     } catch (err) {
-      console.error(err);
+      throw err;
     }
   }
 
@@ -154,7 +163,30 @@ export class UsersController {
         res.send({ result: false, msg: '로그인 상태가 아닙니다' });
       }
     } catch (err) {
-      console.error(err);
+      throw err;
+    }
+  }
+
+  @Post('upload')
+  @UseInterceptors(FileInterceptor('image'))
+  async uploadImage(
+    @UploadedFile() file: Express.Multer.File,
+    @Req() req: Request,
+    @Res() res: Response,
+  ): Promise<void> {
+    try {
+      const logintoken = req.cookies.userKey;
+
+      if (!logintoken) {
+        res.send({ result: false, msg: '로그인 상태가 아닙니다' });
+      }
+      const imageUrl = await this.awsService.imageUploadToS3(file);
+
+      await this.userService.uploadImg(logintoken, imageUrl);
+
+      res.send({ result: true });
+    } catch (error) {
+      throw error;
     }
   }
 }

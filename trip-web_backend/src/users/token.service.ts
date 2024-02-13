@@ -12,9 +12,9 @@ export class TokenService {
     private readonly redis: RedisClient,
   ) {}
 
-  async getEmailFromToken(token: string): Promise<string> {
+  async getUserIdFromToken(token: string): Promise<string> {
     const loginKey = this.jwtService.verify(token).loginkey;
-    const email = await this.redis.get(loginKey);
-    return email;
+    const userId = await this.redis.get(loginKey);
+    return userId;
   }
 }

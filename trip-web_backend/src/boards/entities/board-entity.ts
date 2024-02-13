@@ -1,9 +1,11 @@
+import { UsersEntity } from 'src/users/entities/users-entity';
 import {
   BaseEntity,
   Column,
   CreateDateColumn,
   DeleteDateColumn,
   Entity,
+  ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -33,4 +35,7 @@ export class BoardsEntity extends BaseEntity {
 
   @Column({ nullable: true })
   post_img: string;
+
+  @ManyToOne(() => UsersEntity, (user) => user.boards)
+  author: UsersEntity;
 }

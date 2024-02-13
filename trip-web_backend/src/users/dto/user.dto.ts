@@ -1,7 +1,7 @@
 import { Matches } from 'class-validator';
-import { boolean } from 'joi';
 
 export class userDto {
+  user_id: string;
   email: string;
   nickname: string;
   @Matches(/^[A-Za-z0-9!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]*$/, {
@@ -9,11 +9,12 @@ export class userDto {
   })
   password: string;
   created_at: Date;
+  deleted_at: Date | null;
   profile_img?: string;
 }
 
 export class loginDto {
-  email: string;
+  userId: string;
   pw: string;
 }
 
@@ -32,12 +33,14 @@ export interface jwtPayloadDto {
 }
 
 export interface userInfoDto {
+  user_id: string;
   email: string;
   nickname: string;
   profile_img?: string;
 }
 
 export interface editUserInfo {
+  userId: string;
   email: string;
   nickname: string;
   original_password: string;
