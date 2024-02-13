@@ -30,10 +30,11 @@ const NavContainer = styled.nav`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 1rem;
-  background-color: #333;
-  color: #fff;
-  z-index: 1000; 
+  /* padding: 1rem; */
+  background-color: #fff;
+  color: #000;
+  z-index: 1000;
+  height : 60px ;
 `;
 
 const Logo = styled.div`
@@ -86,10 +87,10 @@ const Menu = styled.div`
 const MenuItem = styled.div`
   padding: 1rem;
   cursor: pointer;
-  transition: background-color 0.3s;
+  transition: color 0.3s;
 
   &:hover {
-    background-color: #555;
+    color: #71C2EB;
   }
 `;
 
@@ -144,9 +145,10 @@ const Header = () => {
             <Icon>&times;</Icon>
           </CloseButton>
         )}
-        <MenuItem>Home</MenuItem>
-        <MenuItem>About</MenuItem>
-        <MenuItem>Contact</MenuItem>
+        <MenuItem>여행지</MenuItem>
+        <MenuItem>일정만들기</MenuItem>
+        <MenuItem>일정공유</MenuItem>
+        <MenuItem>이용안내</MenuItem>
       </Menu>
       {
         isAuth ? (
