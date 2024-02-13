@@ -1,5 +1,5 @@
 import Header from "../ui/Header"
-import Footer from "../components/Footer"
+import Footer from "../ui/Footer"
 import MainUi from "../ui/Main-Ui"
 import { Children } from "react"
 

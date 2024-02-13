@@ -35,6 +35,7 @@ const NavContainer = styled.nav`
   color: #000;
   z-index: 1000;
   height : 60px ;
+  margin-bottom: 60px;
 `;
 
 const Logo = styled.div`
@@ -145,10 +146,10 @@ const Header = () => {
             <Icon>&times;</Icon>
           </CloseButton>
         )}
-        <MenuItem>여행지</MenuItem>
+        <MenuItem>여행</MenuItem>
         <MenuItem>일정만들기</MenuItem>
         <MenuItem>일정공유</MenuItem>
-        <MenuItem>이용안내</MenuItem>
+        <MenuItem>커뮤니티</MenuItem>
       </Menu>
       {
         isAuth ? (
