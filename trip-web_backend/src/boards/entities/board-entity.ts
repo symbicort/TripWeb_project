@@ -38,4 +38,10 @@ export class BoardsEntity extends BaseEntity {
 
   @ManyToOne(() => UsersEntity, (user) => user.boards)
   author: UsersEntity;
+
+  @Column({ default: 0 })
+  like: number;
+
+  @Column({ default: 0 })
+  comment: number;
 }

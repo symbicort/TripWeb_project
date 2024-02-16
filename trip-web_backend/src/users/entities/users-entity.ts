@@ -37,4 +37,13 @@ export class UsersEntity extends BaseEntity {
 
   @OneToMany(() => BoardsEntity, (board) => board.writer)
   boards: BoardsEntity[];
+
+  @Column()
+  like_postId: number;
+
+  @Column()
+  follow: number;
+
+  @Column()
+  comment_postId: number;
 }
