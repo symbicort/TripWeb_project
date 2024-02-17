@@ -10,6 +10,7 @@ import {
   jwtPayloadDto,
   userInfoDto,
   editUserInfo,
+  authUserDto,
 } from './dto/user.dto';
 import { JwtService } from '@nestjs/jwt';
 import { randomKey } from 'src/utils/makeKey';
@@ -101,15 +102,23 @@ export class UsersService {
     }
   }
 
-  async authUser(logintoken: string): Promise<string> {
+  async authUser(logintoken: string): Promise<authUserDto> {
     try {
       const userId = await this.tokenService.getUserIdFromToken(logintoken);
+
+      if (!userId) {
+        return { result: false };
+      }
 
       const idValid = await this.usersDB.findOne({
         where: { user_id: userId },
       });
 
-      return idValid.nickname;
+      if (!idValid) {
+        return { result: false };
+      }
+
+      return { result: true, nickname: idValid.nickname };
     } catch (err) {
       throw err;
     }

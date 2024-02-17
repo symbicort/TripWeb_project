@@ -24,6 +24,11 @@ export class ResultDto {
   token?: string;
 }
 
+export class authUserDto {
+  result: boolean;
+  nickname?: string;
+}
+
 export class loginKeyDto {
   connectKey: string;
   userInfo: string;

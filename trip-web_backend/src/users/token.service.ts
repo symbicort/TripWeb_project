@@ -15,6 +15,7 @@ export class TokenService {
   async getUserIdFromToken(token: string): Promise<string> {
     const loginKey = this.jwtService.verify(token).loginkey;
     const userId = await this.redis.get(loginKey);
+    console.log(userId);
     return userId;
   }
 }
