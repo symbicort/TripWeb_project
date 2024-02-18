@@ -27,7 +27,7 @@ export class AwsService {
 
       const command = new PutObjectCommand({
         Bucket: this.configService.get('AWS_S3_BUCKET'),
-        Key: 'profile_img/' + Date.now().toString() + '-' + cleanedFileName,
+        Key: Date.now().toString() + '-' + cleanedFileName,
         Body: file.buffer,
         ACL: 'public-read',
         ContentType: file.mimetype,

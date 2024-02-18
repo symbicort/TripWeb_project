@@ -1,4 +1,13 @@
-import { Body, Controller, Get, Post, Req, Res } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Post,
+  Req,
+  Res,
+  UploadedFiles,
+  UseInterceptors,
+} from '@nestjs/common';
 import { BoardsService } from './boards.service';
 import { ConfigService } from '@nestjs/config';
 import { BoardDto } from './dto/board.dto';
@@ -8,6 +17,8 @@ import { BoardsEntity } from './entities/board-entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { authUserDto } from 'src/users/dto/user.dto';
+import { AwsService } from 'src/aws/aws.service';
+import { FilesInterceptor } from '@nestjs/platform-express';
 
 @Controller('boards')
 export class BoardsController {
@@ -15,12 +26,15 @@ export class BoardsController {
     private boardService: BoardsService,
     private readonly configService: ConfigService,
     private readonly usersService: UsersService,
+    private readonly awsService: AwsService,
     @InjectRepository(BoardsEntity) private boardsDB: Repository<BoardsEntity>,
   ) {}
 
   @Post('/write')
+  @UseInterceptors(FilesInterceptor('images'))
   async createBoard(
-    @Body('title') post: BoardDto,
+    @UploadedFiles() files: Array<Express.Multer.File>,
+    @Body() post: BoardDto,
     @Req() req: Request,
     @Res() res: Response,
   ) {
@@ -29,7 +43,7 @@ export class BoardsController {
 
       console.log('유저 정보확인', loginUser);
 
-      // const writePost = await this.boardsDB.insert({});
+      // const createPost = await this.boardService.createBoard(req.body);
     } catch (err) {
       throw err;
     }

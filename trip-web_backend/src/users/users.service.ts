@@ -46,6 +46,7 @@ export class UsersService {
 
       return { result: true, nickname: nickname };
     } catch (err) {
+      console.error(err);
       if (err instanceof QueryFailedError) {
         const dupcol = err.message.split("'");
         return { result: false, dupcol: dupcol[1] };

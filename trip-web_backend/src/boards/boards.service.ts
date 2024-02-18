@@ -1,24 +1,26 @@
 import { Injectable } from '@nestjs/common';
 import { Board, Boardstatus } from './boards.model';
-import { v1 as uuid } from 'uuid';
+import { InjectRepository } from '@nestjs/typeorm';
+import { BoardsEntity } from './entities/board-entity';
+import { Repository } from 'typeorm';
+import { AwsService } from 'src/aws/aws.service';
 
 @Injectable()
 export class BoardsService {
-  private boards: Board[] = [];
+  constructor(
+    @InjectRepository(BoardsEntity) private boardsDB: Repository<BoardsEntity>,
+    private readonly awsService: AwsService,
+  ) {}
 
   getAllBoards(): Board[] {
-    return this.boards;
+    return;
   }
 
-  createBoard(title: string, description: string) {
-    const board: Board = {
-      id: uuid(),
-      title,
-      description,
-      status: Boardstatus.PUBLIC,
-    };
-
-    this.boards.push(board);
-    return board;
+  async createBoard(board: Object) {
+    try {
+      const createPost = await this.boardsDB.insert({});
+    } catch (err) {
+      throw err;
+    }
   }
 }

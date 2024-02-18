@@ -38,12 +38,12 @@ export class UsersEntity extends BaseEntity {
   @OneToMany(() => BoardsEntity, (board) => board.writer)
   boards: BoardsEntity[];
 
-  @Column()
+  @Column({ nullable: true })
   like_postId: number;
 
-  @Column()
+  @Column({ nullable: true })
   follow: number;
 
-  @Column()
+  @Column({ nullable: true })
   comment_postId: number;
 }
