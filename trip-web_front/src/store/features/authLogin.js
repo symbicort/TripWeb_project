@@ -49,12 +49,8 @@ export const loginUser = (userData) => async (dispatch) => {
 // 로그아웃 액션 생성자
 export const logoutUser = () => async (dispatch) => {
     try {
-        // 로그아웃에 필요한 작업을 수행합니다.
-        // 예를 들어, 사용자의 인증 토큰을 삭제하거나 서버에서 세션을 종료합니다.
-        // 이 예시에서는 단순히 로그인 상태를 초기화합니다.
         dispatch(logout());
     } catch (error) {
-        // 로그아웃 과정에서 오류가 발생할 경우 처리합니다.
         console.error("로그아웃 중 오류 발생:", error);
     }
 };

@@ -19,7 +19,7 @@ export const signup = async (userData) => {
 export const login = async (userData) => {
   try {
     const response = await axios.post(`${API_URL}/user/login`, userData);
-    console.log('login res ', response);
+    console.log('login res ', response, document.cookie);
     return response.data;
   } catch (error) {
     if (error.response) {
@@ -29,4 +29,5 @@ export const login = async (userData) => {
     }
   }
 };
+
 

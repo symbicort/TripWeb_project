@@ -31,18 +31,12 @@ const Login = () => {
     //   return;
     // }
 
-    dispatch(loginStart());
-    try {
-      await dispatch(loginUser(formData));
-      dispatch(loginSuccess());
-    } catch (error) {
-      dispatch(loginFailure(error.message));
-    }
+    dispatch(loginUser(formData))
   };
 
-  // const handleLogout = () => {
-  //   dispatch(logoutUser()); 
-  // };
+  const handleLogout = () => {
+    dispatch(logoutUser()); 
+  };
 
   return (
     <div>
