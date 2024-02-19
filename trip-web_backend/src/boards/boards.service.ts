@@ -19,7 +19,7 @@ export class BoardsService {
 
   async createBoard(board: createBoardDto, imgUrl: string) {
     try {
-      const createPost = await this.boardsDB.insert(board, imgUrl);
+      const createPost = await this.boardsDB.insert(board);
 
       console.log(createPost);
     } catch (err) {
