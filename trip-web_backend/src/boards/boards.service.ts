@@ -4,6 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { BoardsEntity } from './entities/board-entity';
 import { Repository } from 'typeorm';
 import { AwsService } from 'src/aws/aws.service';
+import { createBoardDto } from './dto/board.dto';
 
 @Injectable()
 export class BoardsService {
@@ -16,9 +17,11 @@ export class BoardsService {
     return;
   }
 
-  async createBoard(board: Object) {
+  async createBoard(board: createBoardDto) {
     try {
-      const createPost = await this.boardsDB.insert({});
+      const createPost = await this.boardsDB.insert(board);
+
+      console.log(createPost);
     } catch (err) {
       throw err;
     }
