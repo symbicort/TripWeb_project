@@ -1,13 +1,13 @@
 // loginSlice.js
 
 import { createSlice } from "@reduxjs/toolkit";
-import { login } from "../../api/authApi"; // logout 함수 임포트
+import { login } from "../../api/authApi"; 
 
 const initialState = {
     user: null,
     loading: false,
     error: null,
-    isLoggedIn: false // 로그인 상태 여부 추가
+    isLoggedIn: false 
 };
 
 const loginSlice = createSlice({
@@ -21,7 +21,7 @@ const loginSlice = createSlice({
         loginSuccess: (state, action) =>{
             state.loading = false;
             state.user = action.payload;
-            state.isLoggedIn = true; // 로그인 성공 시 로그인 상태를 true로 설정
+            state.isLoggedIn = true; 
         },
         loginFailure: (state, action) =>{
             state.loading = false;
@@ -29,7 +29,7 @@ const loginSlice = createSlice({
         },
         logout: (state) => {
             state.user = null;
-            state.isLoggedIn = false; // 로그아웃 시 로그인 상태를 false로 설정
+            state.isLoggedIn = false; 
         }
     }
 });

@@ -12,23 +12,25 @@ const Login = () => {
   const isLoggedIn = useSelector((state) => state.login.isLoggedIn); // 로그인 상태 가져오기
 
   const [formData, setFormData] = useState({
-    email: '',
-    password: '',
+    userId: '',
+    pw: '',
   });
 
-  const handleInputChange = (event) => {
-    const { name, value } = event.target;
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
     setFormData((prevData) => ({
       ...prevData,
       [name]: value
     }));
   };
 
-  const handleSubmit = async (event) => {
-    event.preventDefault();
-    if (!isValidEmail(formData.email) || !hasMinLength(formData.password, 6)) { // 유효성 검사 추가
-      return;
-    }
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    // if (!isValidEmail(formData.email) || !hasMinLength(formData.password, 6)) {
+    //   return;
+    // }
+
     dispatch(loginStart());
     try {
       await dispatch(loginUser(formData));
@@ -38,9 +40,9 @@ const Login = () => {
     }
   };
 
-  const handleLogout = () => {
-    dispatch(logoutUser()); 
-  };
+  // const handleLogout = () => {
+  //   dispatch(logoutUser()); 
+  // };
 
   return (
     <div>
@@ -53,27 +55,29 @@ const Login = () => {
         <form onSubmit={handleSubmit}>
           <h2>Login</h2>
           <div className="control">
-            <label htmlFor="email">이메일</label>
+            <label htmlFor="userId">아이디</label>
             <input
-              id="email"
-              type="email"
-              name="email"
-              value={formData.email}
+              id="userId"
+              type="text"
+              name="userId"
+              value={formData.userId}
               onChange={handleInputChange}
               required
             />
           </div>
 
           <div className="control">
-            <label htmlFor="password">비밀번호</label>
+            <label htmlFor="pw">비밀번호</label>
             <input
-              id="password"
+              id="pw"
               type="password"
-              name="password"
-              value={formData.password}
+              name="pw"
+              value={formData.pw}
               onChange={handleInputChange}
+              autocomplete="current-password"
               required
             />
+
           </div>
           <p>비밀번호를 잊으셨나요?</p>
 
