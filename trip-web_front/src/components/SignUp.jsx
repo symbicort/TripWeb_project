@@ -65,9 +65,8 @@ const Signup = () => {
       return;
     }
    
-    // 유효성 검사 통과 시 회원가입 요청 전송
     setPasswordMismatch(false);
-    dispatch(signupUser(formData)); // 수정된 부분: signupUser로 변경
+    dispatch(signupUser(formData)); 
   };
 
   return (

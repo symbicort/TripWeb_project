@@ -1,18 +1,16 @@
 import axios from 'axios';
 
-const API_URL = 'https://react-http-f08f8-default-rtdb.firebaseio.com';
+const API_URL = 'http://localhost:3001';
 
 export const signup = async (userData) => {
   try {
-    const response = await axios.post(`${API_URL}/user/signup`, userData);
+    const response = await axios.post(`${API_URL}/user/register`, userData);
     console.log('signup res', response);
     return response.data;
   } catch (error) {
     if (error.response) {
-      // 서버 응답이 있는 경우
       throw error.response.data.error;
     } else {
-      // 서버 응답이 없는 경우
       throw '서버 응답이 없습니다. 네트워크 연결을 확인하세요.';
     }
   }
