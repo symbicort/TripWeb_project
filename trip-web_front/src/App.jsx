@@ -3,22 +3,22 @@ import Main from './page/MainPage';
 import GlobalStyles from './styles/GlobalStyles';
 import SignUpPage from './page/SignUpPage';
 import MyPage from './page/MyPage';
-import CommunityBoard from './page/CommunityBoard';
+import Community from './page/Community';
 import LoginPage from './page/LoginPage';
+import { useSelector } from 'react-redux';
 
 function App() {
- 
+ const isLogin = useSelector((state)=>state.login.isLoggedIn)
 
   return (
     <>
     <GlobalStyles/>
       <Routes>
       <Route path="/" element = {<Main />} />
-
       <Route path="/login" element = {<LoginPage/>} />
       <Route path="/signUp" element = {<SignUpPage/>} />
       <Route path='/myPage' element = {<MyPage/>}/>
-      <Route path='/community' element = {<CommunityBoard/>}/>
+      <Route path='/community' element = {<Community/>}/>
 
       </Routes>
     </>

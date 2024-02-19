@@ -39,12 +39,12 @@ const Login = () => {
   };
 
   const handleLogout = () => {
-    dispatch(logoutUser()); // 로그아웃 액션 디스패치
+    dispatch(logoutUser()); 
   };
 
   return (
     <div>
-      {isLoggedIn ? ( // 로그인 상태에 따라 다른 UI를 표시
+      {isLoggedIn ? ( 
         <div>
           <p>이미 로그인되었습니다.</p>
           <button onClick={handleLogout}>로그아웃</button>
@@ -53,7 +53,7 @@ const Login = () => {
         <form onSubmit={handleSubmit}>
           <h2>Login</h2>
           <div className="control">
-            <label htmlFor="email">Email</label>
+            <label htmlFor="email">이메일</label>
             <input
               id="email"
               type="email"
@@ -65,7 +65,7 @@ const Login = () => {
           </div>
 
           <div className="control">
-            <label htmlFor="password">Password</label>
+            <label htmlFor="password">비밀번호</label>
             <input
               id="password"
               type="password"
@@ -75,6 +75,7 @@ const Login = () => {
               required
             />
           </div>
+          <p>비밀번호를 잊으셨나요?</p>
 
           {error && <p className="error-message">{error}</p>}
 

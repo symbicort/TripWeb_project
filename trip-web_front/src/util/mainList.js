@@ -1,37 +1,32 @@
-import componentsImg from '../assets/components.png';
-import propsImg from '../assets/config.png';
-import jsxImg from '../assets/jsx-ui.png';
-import stateImg from '../assets/state-mgmt.png';
+import travalImg from '../assets/travalImg.png';
+import blogImg from '../assets/blogImg.png';
+import communityImg from '../assets/communityImg.png';
 
-export const CORE_CONCEPTS = [
+export const Main_function = [
   {
-    image: componentsImg,
-    title: 'Components',
+    image: travalImg,
+    title: '여행정보',
     description:
-      'The core UI building block - compose the user interface by combining multiple components.',
+      '전 세계 800개 도시, 30만개의 관광명소, 음식점, 쇼핑 정보를 확인하세요.',
   },
   {
-    image: jsxImg,
-    title: 'JSX',
+    image: blogImg,
+    title: '여행일정',
     description:
-      'Return (potentially dynamic) HTML(ish) code to define the actual markup that will be rendered.',
+      '전 세계 100, 000개 이상의 여행일절을 확인하고 나만의 일정을 계획해 보세요.',
   },
   {
-    image: propsImg,
-    title: 'Props',
+    image: communityImg,
+    title: '커뮤니티',
     description:
-      'Make components configurable (and therefore reusable) by passing input data to them.',
-  },
-  {
-    image: stateImg,
-    title: 'State',
-    description:
-      'React-managed data which, when changed, causes the component to re-render & the UI to update.',
+      '여행자들과 정보를 공유하고, 궁금한 것은 언제든 물어보세요',
   },
 ];
 
-export const EXAMPLES = {
+
+export const National_list = {
   components: {
+    imgae : travalImg,
     title: 'Components',
     description:
       'Components are the building blocks of React applications. A component is a self-contained module (HTML + optional CSS + JS) that renders some output.',

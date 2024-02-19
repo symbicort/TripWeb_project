@@ -4,6 +4,8 @@ import {authUiActions} from '../store/features/authUi'
 import {useSelector, useDispatch} from 'react-redux';
 import logo from '../assets/logo.png';
 
+import { Link } from "react-router-dom";
+
 const slideIn = keyframes`
   from {
     transform: translateX(-100%);
@@ -35,10 +37,9 @@ const NavContainer = styled.nav`
   color: #000;
   z-index: 1000;
   height : 60px ;
-  margin-bottom: 60px;
 `;
 
-const Logo = styled.div`
+const Logo = styled(Link)`
   font-size: 1.5rem;
   font-weight: bold;
   margin-left: 1rem;
@@ -85,7 +86,7 @@ const Menu = styled.div`
   }
 `;
 
-const MenuItem = styled.div`
+const MenuItem = styled(Link)`
   padding: 1rem;
   cursor: pointer;
   transition: color 0.3s;
@@ -95,7 +96,7 @@ const MenuItem = styled.div`
   }
 `;
 
-const LoginButton = styled.div`
+const LoginButton = styled(Link)`
   cursor: pointer;
   padding: 1rem;
   border-left: 1px solid #555;
@@ -123,6 +124,8 @@ const Header = () => {
   };
 
   const isAuth = useSelector((state)=>state.authUi.isAuthState);
+  // const isLogin = useSelector((state)=>state.login.isLoggedIn)
+
 
   const logoutHandler = (e) =>{
     e.preventDefault();
@@ -137,7 +140,7 @@ const Header = () => {
           <Icon>&#9776;</Icon>
         </MenuIcon>
      
-      <Logo>
+      <Logo to='/'>
         <img src={logo} alt="Logo" />
       </Logo>
       <Menu isOpen={menuOpen}>
@@ -149,7 +152,7 @@ const Header = () => {
         <MenuItem>여행</MenuItem>
         <MenuItem>일정만들기</MenuItem>
         <MenuItem>일정공유</MenuItem>
-        <MenuItem>커뮤니티</MenuItem>
+        <MenuItem to="/community">커뮤니티</MenuItem>
       </Menu>
       {
         isAuth ? (
@@ -166,7 +169,7 @@ const Header = () => {
             </li>
           </ul>
         </nav>
-       ) : <LoginButton>Login</LoginButton> 
+       ) : <LoginButton to="/login">Login</LoginButton> 
       }
       
     </NavContainer>

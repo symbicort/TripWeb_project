@@ -1,0 +1,37 @@
+/* Form 스타일 */
+.slider-form {
+    width: 100%;
+    margin: auto;
+    overflow: hidden;
+  }
+  
+  .slide-form {
+    display: none;
+  }
+  
+  .slide-form.active {
+    display: block;
+  }
+  
+  .prev-btn-form,
+  .next-btn-form {
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+    outline: none;
+  }
+  
+  .prev-btn-form {
+    float: left;
+    margin-right: 10px;
+  }
+  
+  .next-btn-form {
+    float: right;
+    margin-left: 10px;
+  }
+  

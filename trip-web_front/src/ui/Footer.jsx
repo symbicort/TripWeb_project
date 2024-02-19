@@ -7,8 +7,8 @@ import instargram from '../assets/instargram.png'
 import linkedIn from '../assets/linkedIn.png'
 
 const FooterContainer = styled.footer`
-  background-color: black;
-  color: white;
+  background-color: #F7F8F9;
+  color: black;
   padding: 20px;
   text-align: center;
 
@@ -41,6 +41,7 @@ const LogoFoot = styled.div`
 
   p {
     margin-top: 10px;
+    color: black; 
   }
 `;
 
@@ -69,6 +70,10 @@ const FooterBottomLeft = styled.div`
     margin-bottom: 10px;
     text-align: left;
   }
+
+  p {
+    color: black;
+  }
 `;
 
 const FooterBottomRight = styled.div`
@@ -81,7 +86,7 @@ const FooterBottomRight = styled.div`
       margin-bottom: 5px;
 
       a {
-        color: white;
+        color: black; 
         text-decoration: none;
       }
     }
@@ -117,7 +122,7 @@ const Footer = () => {
             <p>(주)제2조 | 조장 : God 정 원 | 사업자 번호 : 010-9500-2663 | 코딩판매업 : 제 2022-서울마포-1241호</p>
             <p>Git <i className="bi bi-git"></i> : https://github.com/symbicort/TripWeb_project.git | 전화 : 070-9500-2663</p>
             <p>주소 : 서울특별시 마포구 숭문 4길 6 스트레틱스 염리 사옥 4층</p>
-            <p>@ 2024 KDT PROJECT 2조</p>
+            <p>@ 2024 KDT PROJECT</p>
           </FooterBottomLeft>
           <FooterBottomRight>
             <ul className="footer-ul">

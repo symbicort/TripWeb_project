@@ -1,13 +1,13 @@
 import Signup from "../components/SignUp"
-import Header from "../ui/Header"
-import Footer from "../ui/Footer"
+// import Header from "../ui/Header"
+// import Footer from "../ui/Footer"
 
 const SignUpPage = () => {
   return(
     <>
-      <Header/>
+      {/* <Header/> */}
         <Signup/>
-      <Footer/>
+      {/* <Footer/> */}
     </>
   )
 }
