@@ -31,7 +31,7 @@ export class BoardsController {
   ) {}
 
   @Post('/write')
-  @UseInterceptors(FilesInterceptor('files'))
+  @UseInterceptors(FilesInterceptor('images'))
   async createBoard(
     @UploadedFiles() files: Array<Express.Multer.File>,
     @Body() post: BoardDto,
@@ -39,6 +39,7 @@ export class BoardsController {
     @Res() res: Response,
   ) {
     try {
+      console.log('이미지 업로드 요청 get');
       let S3imgLink;
 
       console.log('게시글 업로드 요청', files, post);
@@ -47,10 +48,12 @@ export class BoardsController {
       console.log('유저 정보확인', loginUser);
 
       for (let i = 0; i < files.length; i++) {
-        const imgUpload = this.awsService.imageUploadToS3(files[i]);
+        const imgUpload = await this.awsService.imageUploadToS3(files[i]);
 
-        console.log(imgUpload);
+        S3imgLink += imgUpload + ',';
       }
+
+      console.log('post_img 컬럼에 들어갈 값', S3imgLink);
 
       // const createPost = await this.boardService.createBoard(req.body);
     } catch (err) {

@@ -44,6 +44,8 @@ export class AwsService {
       const fileName = command.input.Key; // 업로드된 파일의 Key (경로를 포함한 파일 이름)
       const imageUrl = `https://s3.${process.env.AWS_REGION}.amazonaws.com/${process.env.AWS_S3_BUCKET}/${fileName}`;
 
+      console.log('업로드 된 이미지 URL', imageUrl);
+
       return imageUrl;
     } catch (error) {
       throw error;
