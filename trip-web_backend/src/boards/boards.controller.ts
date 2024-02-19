@@ -46,6 +46,7 @@ export class BoardsController {
       const loginUser = await this.checkUser(req);
 
       console.log('유저 정보확인', loginUser);
+      console.log('글 작성 데이터 확인', post);
 
       for (let i = 0; i < files.length; i++) {
         const imgUpload = await this.awsService.imageUploadToS3(files[i]);

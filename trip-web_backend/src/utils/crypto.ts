@@ -1,7 +1,6 @@
 import { genSaltSync, hashSync, compareSync } from 'bcrypt';
 
 export function hashPW(password: string): string {
-  console.log(process.env.PASSWORD_SALT, password);
   const saltRounds: number = Number(process.env.PASSWORD_SALT);
   const salt = genSaltSync(saltRounds);
   console.log(salt);

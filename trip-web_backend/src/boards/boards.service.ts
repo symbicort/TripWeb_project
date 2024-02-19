@@ -17,9 +17,9 @@ export class BoardsService {
     return;
   }
 
-  async createBoard(board: createBoardDto) {
+  async createBoard(board: createBoardDto, imgUrl: string) {
     try {
-      const createPost = await this.boardsDB.insert(board);
+      const createPost = await this.boardsDB.insert(board, imgUrl);
 
       console.log(createPost);
     } catch (err) {
