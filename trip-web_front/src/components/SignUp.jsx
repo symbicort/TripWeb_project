@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useDispatch } from 'react-redux';
-import { signupUser } from '../store/features/authSlice'; 
+import { signupUser } from '../store/features/authSlice';
 import { checkUserId } from '../store/features/authUserCheck';
 import { useNavigate } from 'react-router-dom';
 import '../styles/Auth.css';
@@ -11,11 +11,11 @@ const Signup = () => {
   const [formData, setFormData] = useState({
     user_id: '',
     password: '',
-    email : '',
+    email: '',
     confirmPassword: '',
     nickname: '',
     fullName: '',
-    terms: false
+    terms: false,
   });
 
   const [userIdAvailable, setUserIdAvailable] = useState(true);
@@ -25,7 +25,7 @@ const Signup = () => {
     const { name, value } = e.target;
     setFormData((prevData) => ({
       ...prevData,
-      [name]: value
+      [name]: value,
     }));
   };
 
@@ -33,13 +33,13 @@ const Signup = () => {
     const { name, checked } = e.target;
     setFormData((prevData) => ({
       ...prevData,
-      [name]: checked
+      [name]: checked,
     }));
   };
 
   const handleCheckUserId = async () => {
     try {
-      const isAvailable = await dispatch(checkUserId(formData.user_id)); 
+      const isAvailable = await dispatch(checkUserId(formData.user_id));
       setUserIdAvailable(isAvailable);
       setIsFormValid(!isAvailable);
       if (!isAvailable) {
@@ -54,10 +54,12 @@ const Signup = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    
+    if (!isFormValid) {
+      alert('양식을 올바르게 입력하세요.');
+      return;
+    }
     try {
-      dispatch(signupUser(formData))
-      .then(() => {
+      dispatch(signupUser(formData)).then(() => {
         navigate('/');
       });
     } catch (error) {
@@ -90,23 +92,25 @@ const Signup = () => {
           name="user_id"
           value={formData.user_id}
           onChange={handleInputChange}
-          onBlur={handleCheckUserId} 
           required
         />
+        <button type="button" onClick={handleCheckUserId}>
+          아이디 중복 확인
+        </button>
         {!userIdAvailable && <p>이미 사용 중인 아이디입니다.</p>}
       </div>
 
       <div className="control">
-          <label htmlFor="nickname">닉네임</label>
-          <input
-            id="nickname"
-            type="text"
-            name="nickname"
-            value={formData.nickname}
-            onChange={handleInputChange}
-            required
-          />
-        </div>
+        <label htmlFor="nickname">닉네임</label>
+        <input
+          id="nickname"
+          type="text"
+          name="nickname"
+          value={formData.nickname}
+          onChange={handleInputChange}
+          required
+        />
+      </div>
 
       <div className="control-row">
         <div className="control">
@@ -122,7 +126,7 @@ const Signup = () => {
         </div>
 
         <div className="control">
-          <label htmlFor="confirmPassword">비빌번호 확인</label>
+          <label htmlFor="confirmPassword">비밀번호 확인</label>
           <input
             id="confirmPassword"
             type="password"
@@ -134,7 +138,7 @@ const Signup = () => {
         </div>
 
         <div className="control">
-          <label htmlFor="fullName">이메일</label>
+          <label htmlFor="email">이메일</label>
           <input
             id="email"
             type="text"
@@ -153,6 +157,7 @@ const Signup = () => {
             name="terms"
             checked={formData.terms}
             onChange={handleCheckboxChange}
+            required
           />
           위에 약관에 동의하십니까?
         </label>
