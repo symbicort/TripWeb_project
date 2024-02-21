@@ -55,6 +55,38 @@ export class UsersService {
     }
   }
 
+  async checkDupId(inputId: string): Promise<boolean> {
+    try {
+      const result = await this.usersDB.count({ where: { user_id: inputId } });
+
+      // DB 내에 있으면 false, 없으면 true
+      if (result > 0) {
+        return false;
+      } else {
+        return true;
+      }
+    } catch (err) {
+      throw err;
+    }
+  }
+
+  async checkDupNickname(inputNickname: string): Promise<boolean> {
+    try {
+      const result = await this.usersDB.count({
+        where: { nickname: inputNickname },
+      });
+
+      // DB 내에 있으면 false, 없으면 true
+      if (result > 0) {
+        return false;
+      } else {
+        return true;
+      }
+    } catch (err) {
+      throw err;
+    }
+  }
+
   async login(data: loginDto): Promise<ResultDto> {
     try {
       const { userId, pw } = data;

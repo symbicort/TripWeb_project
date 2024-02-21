@@ -26,6 +26,9 @@ export class UsersEntity extends BaseEntity {
   @Column({ type: 'nvarchar', length: 100 })
   password: string;
 
+  @Column({ type: 'nvarchar' })
+  gender: string;
+
   @CreateDateColumn({ type: 'timestamp' })
   created_at: Date;
 

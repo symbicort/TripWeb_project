@@ -37,8 +37,46 @@ export class UsersController {
       res.status(500).send(`during register error: ${err}`);
     }
   }
+
+  @Get('/checkDupId')
+  async checkDupId(@Req() req: Request): Promise<boolean> {
+    try {
+      const inputId: string = req.query.inputId as string;
+
+      if (!inputId) {
+        return false;
+      }
+
+      const result = await this.userService.checkDupId(inputId);
+
+      return result;
+    } catch (err) {
+      throw err;
+    }
+  }
+
+  @Get('/checkDupNick')
+  async checkDupNick(@Req() req: Request): Promise<boolean> {
+    try {
+      const inputNickname: string = req.query.nickname as string;
+
+      if (!inputNickname) {
+        return false;
+      }
+
+      const result = await this.userService.checkDupNickname(inputNickname);
+
+      return result;
+    } catch (err) {
+      throw err;
+    }
+  }
+
   @Post('/login')
-  async login(@Body() data: loginDto, @Res() res: Response): Promise<void> {
+  async login(
+    @Body() data: loginDto,
+    @Res({ passthrough: true }) res: Response,
+  ): Promise<void> {
     try {
       const result = await this.userService.login(data);
 
@@ -46,25 +84,37 @@ export class UsersController {
 
       const token = result.token;
 
+      // res.setHeader('Authorization', 'Bearer' + token);
+
       res.cookie('userKey', token, {
         httpOnly: true,
-        sameSite: 'strict',
+        sameSite: 'none',
         maxAge: 7 * 24 * 60 * 60 * 1000,
       });
 
+      console.log(res);
+
       res.send({ result: result.result, msg: result.msg });
     } catch (err) {
-      res.status(500).send(`during login error: ${err}`);
+      throw err;
     }
   }
   @Get('/logout')
   async logOut(@Req() req: Request, @Res() res: Response): Promise<void> {
     try {
-      const logintoken = req.cookies.userKey;
+      const logintoken = await req.cookies.userKey;
+
+      console.log(!logintoken);
+
+      console.log(req.cookies);
 
       if (!logintoken) {
-        res.send({ result: false, msg: '로그인 상태가 아닙니다' });
+        console.log('로그인 토큰 if');
+        res.status(401).send({ result: false, msg: '로그인 상태가 아닙니다' });
+        return;
       }
+
+      console.log('이 로그가 찍히면 문제가 잇음');
 
       const result = await this.userService.logout(logintoken);
 
@@ -87,6 +137,7 @@ export class UsersController {
 
       if (!logintoken) {
         res.send({ result: false, msg: '로그인 상태가 아닙니다' });
+        return;
       }
 
       const result = await this.userService.authUser(logintoken);
@@ -179,6 +230,7 @@ export class UsersController {
 
       if (!logintoken) {
         res.send({ result: false, msg: '로그인 상태가 아닙니다' });
+        return;
       }
       const imageUrl = await this.awsService.imageUploadToS3(file);
 
