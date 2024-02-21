@@ -1,9 +1,8 @@
 
- // 정규식을 사용하여 이메일 형식 검사
+ // 이메일  검사
  export function isValidEmail(value) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
 }
-
 
 //비어있는지?
 export function isNotEmpty(value) {

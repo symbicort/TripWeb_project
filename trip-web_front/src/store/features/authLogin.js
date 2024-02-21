@@ -1,5 +1,3 @@
-// loginSlice.js
-
 import { createSlice } from "@reduxjs/toolkit";
 import { login } from "../../api/authApi"; 
 
@@ -46,7 +44,6 @@ export const loginUser = (userData) => async (dispatch) => {
     }
 };
 
-// 로그아웃 액션 생성자
 export const logoutUser = () => async (dispatch) => {
     try {
         dispatch(logout());
