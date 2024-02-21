@@ -19,6 +19,8 @@ import { Repository } from 'typeorm';
 import { authUserDto } from 'src/users/dto/user.dto';
 import { AwsService } from 'src/aws/aws.service';
 import { FilesInterceptor } from '@nestjs/platform-express';
+import { create } from 'domain';
+import { S3 } from 'aws-sdk';
 
 @Controller('boards')
 export class BoardsController {
@@ -40,7 +42,7 @@ export class BoardsController {
   ) {
     try {
       console.log('이미지 업로드 요청 get');
-      let S3imgLink;
+      let S3imgLink: string;
 
       console.log('게시글 업로드 요청', files, post);
       const loginUser = await this.checkUser(req);
@@ -56,7 +58,12 @@ export class BoardsController {
 
       console.log('post_img 컬럼에 들어갈 값', S3imgLink);
 
-      // const createPost = await this.boardService.createBoard(req.body);
+      const createPost = await this.boardService.createBoard(
+        req.body,
+        S3imgLink,
+      );
+
+      console.log('게시글 업로드', createPost);
     } catch (err) {
       throw err;
     }

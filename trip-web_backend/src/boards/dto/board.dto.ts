@@ -16,6 +16,6 @@ export class createBoardDto {
   title: string;
   content: string;
   writer: string;
-  post_img: string;
+  post_img: string | undefined;
   author: UsersEntity;
 }

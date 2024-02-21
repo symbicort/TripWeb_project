@@ -59,6 +59,8 @@ export class UsersService {
     try {
       const result = await this.usersDB.count({ where: { user_id: inputId } });
 
+      console.log('유저 아이디 검증', result, inputId);
+
       // DB 내에 있으면 false, 없으면 true
       if (result > 0) {
         return false;

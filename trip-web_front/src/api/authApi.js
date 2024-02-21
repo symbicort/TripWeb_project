@@ -1,9 +1,9 @@
 import axios from 'axios';
 const API_URL = 'http://localhost:3001';
 
-export const checkUserIdApi = async (userId) => {
+export const checkUserIdApi = async (inputId) => {
   try {
-    const response = await axios.get(`${API_URL}/user/checkDupId`, { params: { userId } });
+    const response = await axios.get(`${API_URL}/user/checkDupId`, { params: { inputId } });
     console.log(response);
     return response.data;
   } catch (error) {

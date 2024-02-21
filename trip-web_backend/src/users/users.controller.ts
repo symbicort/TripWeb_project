@@ -41,6 +41,7 @@ export class UsersController {
   @Get('/checkDupId')
   async checkDupId(@Req() req: Request): Promise<boolean> {
     try {
+      console.log(req.query);
       const inputId: string = req.query.inputId as string;
 
       if (!inputId) {
@@ -113,8 +114,6 @@ export class UsersController {
         res.status(401).send({ result: false, msg: '로그인 상태가 아닙니다' });
         return;
       }
-
-      console.log('이 로그가 찍히면 문제가 잇음');
 
       const result = await this.userService.logout(logintoken);
 

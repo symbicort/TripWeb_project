@@ -13,13 +13,16 @@ export class BoardsService {
     private readonly awsService: AwsService,
   ) {}
 
-  getAllBoards(): Board[] {
-    return;
-  }
-
   async createBoard(board: createBoardDto, imgUrl: string) {
     try {
-      const createPost = await this.boardsDB.insert(board);
+      const postData = {
+        ...board,
+        post_img: imgUrl,
+      };
+
+      console.log('게시글 업로드 데이터', postData);
+
+      const createPost = await this.boardsDB.insert(postData);
 
       console.log(createPost);
     } catch (err) {
