@@ -1,5 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { login } from "../../api/authApi"; 
+import { login, tryLogout } from "../../api/authApi"; 
 
 const initialState = {
     user: null,
@@ -47,6 +47,8 @@ export const loginUser = (userData) => async (dispatch) => {
 export const logoutUser = () => async (dispatch) => {
     try {
         dispatch(logout());
+        const userLogout = await tryLogout();
+        console.log(userLogout);
     } catch (error) {
         console.error("로그아웃 중 오류 발생:", error);
     }

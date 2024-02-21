@@ -40,6 +40,20 @@ export const login = async (userData) => {
   }
 };
 
+export const tryLogout = async (userData) => {
+  try {
+    const response = await axios.get(`${API_URL}/user/logout`,{withCredentials: true});
+    console.log('logout res ', response, document.cookie);
+    return response.data;
+  } catch (error) {
+    if (error.response) {
+      throw error.response.data.error;
+    } else {
+      throw '서버 응답이 없습니다. 네트워크 연결을 확인하세요.';
+    }
+  }
+};
+
 
 
 // export const checkNickname = (nickname) => async (dispatch) => {

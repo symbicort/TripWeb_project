@@ -104,7 +104,7 @@ export class UsersController {
     try {
       const logintoken = await req.cookies.userKey;
 
-      console.log(!logintoken);
+      console.log(logintoken);
 
       console.log(req.cookies);
 
