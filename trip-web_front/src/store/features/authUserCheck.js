@@ -6,6 +6,15 @@ const initialState = {
   isNickname: true,
 };
 
+export const checkUserId = (userId) => async (dispatch) => {
+  try {
+    const isAvailable = await checkUserIdApi(userId); 
+    dispatch(setUserId(isAvailable));
+  } catch (error) {
+    console.error('사용자 아이디 중복 체크 실패:', error);
+  }
+};
+
 const userCheckSlice = createSlice({
   name: 'userCheck',
   initialState,
@@ -21,13 +30,5 @@ const userCheckSlice = createSlice({
 
 export const { setUserId, setNickname } = userCheckSlice.actions;
 
-export const checkUserId = (userId) => async (dispatch) => {
-    try {
-      const isAvailable = await checkUserIdApi(userId); 
-      dispatch(setUserId(isAvailable));
-    } catch (error) {
-      console.error('사용자 아이디 중복 체크 실패:', error);
-    }
-  };
 
 export default userCheckSlice.reducer;

@@ -1,13 +1,12 @@
 import { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { signupUser } from '../store/features/authSlice'; 
-// import { checkUserId } from '../store/features/authUserCheck';
-import { isValidEmail, isNotEmpty, hasMinLength, hasMaxLength, isEqualsToOtherValue } from '../util/vailidation';
+import { checkUserId } from '../store/features/authUserCheck';
 import { useNavigate } from 'react-router-dom';
 import '../styles/Auth.css';
 
 const Signup = () => {
-  const navigate = useNavigate()
+  const navigate = useNavigate();
   const dispatch = useDispatch();
   const [formData, setFormData] = useState({
     user_id: '',
@@ -19,8 +18,8 @@ const Signup = () => {
     terms: false
   });
 
-  const [passwordMismatch, setPasswordMismatch] = useState(false);
-  // const [userIdAvailable, setUserIdAvailable] = useState(true);
+  const [userIdAvailable, setUserIdAvailable] = useState(true);
+  const [isFormValid, setIsFormValid] = useState(false);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -42,63 +41,28 @@ const Signup = () => {
     try {
       const isAvailable = await dispatch(checkUserId(formData.user_id)); 
       setUserIdAvailable(isAvailable);
-    if (!userIdAvailable) {
-      alert('이미 사용 중인 아이디입니다.');
-      return;
-    }
+      setIsFormValid(!isAvailable);
+      if (!isAvailable) {
+        alert('사용 가능한 아이디입니다.');
+      } else {
+        alert('이미 사용 중인 아이디입니다.');
+      }
     } catch (error) {
       console.error('아이디 중복 체크 에러:', error);
     }
-  }
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-
-    if (!isValidEmail(formData.email)) {
-      alert('유효한 이메일 주소를 입력하세요.');
-      return;
-    }
-
-    if (!hasMinLength(formData.password, 6)) {
-      alert('비밀번호는 최소 6자 이상이어야 합니다.');
-      return;
-    }
-
-    if (!isEqualsToOtherValue(formData.password, formData.confirmPassword)) {
-      alert('비밀번호가 일치하지 않습니다.');
-      return;
-    }
-
-    if (!hasMaxLength(formData.password, 20)) {
-      alert('비밀번호는 최대 20자 이하이어야 합니다.');
-      return;
-    }
-
-    // if (!matchesPattern(formData.password, /((?!([a-zA-Z0-9])\1\1)[a-zA-Z0-9].*[!,@,#,$,%,^,&,*,?,_,~])|((?![!,@,#,$,%,^,&,*,?,_,~]\1\1)[!,@,#,$,%,^,&,*,?,_,~].*[a-zA-Z0-9])/)) {
-    //   alert('연속으로 동일한 문자를 3번 이상 허용하지 않음');
-    //   return;
-    // }
-        
-    if (!isNotEmpty(formData.fullName,formData.password)) {
-      alert('성명을 입력하세요.');
-      return;
-    }
-
-    if(!formData.terms){
-      alert('위에 약관에 동의 부탁드립니다!')
-      return;
-    }
-
-    setPasswordMismatch(false);
-    try{
+    
+    try {
       dispatch(signupUser(formData))
-      .then(()=>{
-        navigate('/')
-      })
-    }catch(error){
-      console.log('error ', error)
+      .then(() => {
+        navigate('/');
+      });
+    } catch (error) {
+      console.log('error ', error);
     }
-     
   };
 
   return (
@@ -126,9 +90,10 @@ const Signup = () => {
           name="user_id"
           value={formData.user_id}
           onChange={handleInputChange}
+          onBlur={handleCheckUserId} 
           required
         />
-        {/* <button type="button" onClick={handleCheckUserId}>아이디 중복 확인</button> */}
+        {!userIdAvailable && <p>이미 사용 중인 아이디입니다.</p>}
       </div>
 
       <div className="control">
@@ -179,11 +144,7 @@ const Signup = () => {
             required
           />
         </div>
-
-        {passwordMismatch && <p className="control-error">Passwords must match.</p>}
       </div>
-
-      {/* Add other form controls */}
 
       <div className="control">
         <label>
@@ -201,7 +162,7 @@ const Signup = () => {
         <button type="reset" className="button button-flat">
           Reset
         </button>
-        <button type="submit" className="button">
+        <button type="submit" className="button" disabled={!isFormValid}>
           회원가입
         </button>
       </p>

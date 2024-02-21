@@ -3,8 +3,9 @@ const API_URL = 'http://localhost:3001';
 
 export const checkUserIdApi = async (userId) => {
   try {
-    const response = await axios.post(`${API_URL}/api/authuser`, { userId });
-    return response.data.isAvailable;
+    const response = await axios.get(`${API_URL}/user/checkDupId`, { params: { userId } });
+    console.log(response);
+    return response.data;
   } catch (error) {
     console.error('유저 아이디 중복 체크 실패:', error);
     throw error; 
