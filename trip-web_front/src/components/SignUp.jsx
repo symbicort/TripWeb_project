@@ -3,9 +3,11 @@ import { useDispatch } from 'react-redux';
 import { signupUser } from '../store/features/authSlice'; 
 // import { checkUserId } from '../store/features/authUserCheck';
 import { isValidEmail, isNotEmpty, hasMinLength, hasMaxLength, isEqualsToOtherValue } from '../util/vailidation';
+import { useNavigate } from 'react-router-dom';
 import '../styles/Auth.css';
 
 const Signup = () => {
+  const navigate = useNavigate()
   const dispatch = useDispatch();
   const [formData, setFormData] = useState({
     user_id: '',
@@ -52,7 +54,6 @@ const Signup = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-
     if (!isValidEmail(formData.email)) {
       alert('유효한 이메일 주소를 입력하세요.');
       return;
@@ -89,7 +90,15 @@ const Signup = () => {
     }
 
     setPasswordMismatch(false);
-    dispatch(signupUser(formData)); 
+    try{
+      dispatch(signupUser(formData))
+      .then(()=>{
+        navigate('/')
+      })
+    }catch(error){
+      console.log('error ', error)
+    }
+     
   };
 
   return (

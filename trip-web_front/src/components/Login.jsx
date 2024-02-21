@@ -1,15 +1,15 @@
 import React from 'react';
 import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { loginUser, logoutUser } from '../store/features/authLogin';
-import { isValidEmail, hasMinLength } from '../util/vailidation'
+import { loginUser } from '../store/features/authLogin';
 import '../styles/Auth.css';
+import { useNavigate } from 'react-router-dom';
 
 const Login = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const loading = useSelector((state) => state.login.loading);
   const error = useSelector((state) => state.login.error);
-  const isLoggedIn = useSelector((state) => state.login.isLoggedIn); // 로그인 상태 가져오기
 
   const [formData, setFormData] = useState({
     userId: '',
@@ -26,26 +26,18 @@ const Login = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    // if (!isValidEmail(formData.email) || !hasMinLength(formData.password, 6)) {
-    //   return;
-    // }
-
-    dispatch(loginUser(formData))
+  
+    try {
+      await dispatch(loginUser(formData));
+      navigate('/');
+    } catch (error) {
+      console.error('로그인 에러:', error);
+    }
   };
 
-  const handleLogout = () => {
-    dispatch(logoutUser()); 
-  };
 
   return (
-    <div>
-      {isLoggedIn ? ( 
         <div>
-          <p>이미 로그인되었습니다.</p>
-          <button onClick={handleLogout}>로그아웃</button>
-        </div>
-      ) : (
         <form onSubmit={handleSubmit}>
           <h2>Login</h2>
           <div className="control">
@@ -68,7 +60,7 @@ const Login = () => {
               name="pw"
               value={formData.pw}
               onChange={handleInputChange}
-              autocomplete="current-password"
+              autoComplete="current-password"
               required
             />
 
@@ -83,7 +75,6 @@ const Login = () => {
             </button>
           </p>
         </form>
-      )}
     </div>
   );
 };

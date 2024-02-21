@@ -14,8 +14,6 @@ export const checkUserIdApi = async (userId) => {
 export const signup = async (userData) => {
   try {
     const response = await axios.post(`${API_URL}/user/register`, userData);
-    console.log('signup res', response);
-    console.log('signup res data', response.data);
     return response.data;
   } catch (error) {
     if (error.response) {
@@ -29,7 +27,6 @@ export const signup = async (userData) => {
 export const login = async (userData) => {
   try {
     const response = await axios.post(`${API_URL}/user/login`, userData, {withCredentials: true});
-    console.log('login res ', response, document.cookie);
     return response.data;
   } catch (error) {
     if (error.response) {
@@ -40,10 +37,9 @@ export const login = async (userData) => {
   }
 };
 
-export const tryLogout = async (userData) => {
+export const Logout = async () => {
   try {
     const response = await axios.get(`${API_URL}/user/logout`,{withCredentials: true});
-    console.log('logout res ', response, document.cookie);
     return response.data;
   } catch (error) {
     if (error.response) {

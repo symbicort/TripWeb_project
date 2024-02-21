@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
+import React from 'react';
+import { useState } from 'react';
 import styled, { keyframes } from 'styled-components';
-import {authUiActions} from '../store/features/authUi'
-import {useSelector, useDispatch} from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import logo from '../assets/logo.png';
-
-import { Link } from "react-router-dom";
+import user from '../assets/user.png';
+import { Link } from 'react-router-dom';
+import { logoutUser } from '../store/features/authLogin';
 
 const slideIn = keyframes`
   from {
@@ -32,11 +33,10 @@ const NavContainer = styled.nav`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  /* padding: 1rem; */
   background-color: #fff;
   color: #000;
   z-index: 1000;
-  height : 60px ;
+  height: 60px;
 `;
 
 const Logo = styled(Link)`
@@ -79,7 +79,8 @@ const Menu = styled.div`
     width: 80%;
     height: 100vh;
     position: absolute;
-    top: 0;left: 0;
+    top: 0;
+    left: 0;
     background-color: #333;
     display: ${(props) => (props.isOpen ? 'flex' : 'none')};
     z-index: 1;
@@ -92,7 +93,7 @@ const MenuItem = styled(Link)`
   transition: color 0.3s;
 
   &:hover {
-    color: #71C2EB;
+    color: #71c2eb;
   }
 `;
 
@@ -116,30 +117,24 @@ const Icon = styled.span`
 `;
 
 const Header = () => {
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
   const [menuOpen, setMenuOpen] = useState(false);
+  const isLogging = useSelector((state) => state.login.isLoggedIn);
 
   const toggleMenu = () => {
     setMenuOpen(!menuOpen);
   };
 
-  const isAuth = useSelector((state)=>state.authUi.isAuthState);
-  // const isLogin = useSelector((state)=>state.login.isLoggedIn)
-
-
-  const logoutHandler = (e) =>{
-    e.preventDefault();
-    
-    dispatch(authUiActions.logout())
-  }
-
+  const handleLogout = () => {
+    dispatch(logoutUser());
+  };
 
   return (
     <NavContainer>
-        <MenuIcon onClick={toggleMenu}>
-          <Icon>&#9776;</Icon>
-        </MenuIcon>
-     
+      <MenuIcon onClick={toggleMenu}>
+        <Icon>&#9776;</Icon>
+      </MenuIcon>
+
       <Logo to='/'>
         <img src={logo} alt="Logo" />
       </Logo>
@@ -154,24 +149,25 @@ const Header = () => {
         <MenuItem>일정공유</MenuItem>
         <MenuItem to="/community">커뮤니티</MenuItem>
       </Menu>
-      {
-        isAuth ? (
-          <nav>
+      {isLogging ? (
+        <nav>
           <ul>
             <li>
-              <a href='/'>My Products</a>
+              <button onClick={handleLogout}>Logout</button>
             </li>
             <li>
-              <a href='/'>My Sales</a>
-            </li>
-            <li>
-              <button onClick={logoutHandler}>Logout</button>
+              <a href='/'>
+                <img style={{ width: '40px' }} src={user} alt="My page" />
+              </a>
             </li>
           </ul>
         </nav>
-       ) : <LoginButton to="/login">Login</LoginButton> 
-      }
-      
+      ) : (
+        <LoginButton to="/login">
+          <img style={{ width: '40px' }} src={user} alt="My page" />
+          Login
+        </LoginButton>
+      )}
     </NavContainer>
   );
 };
