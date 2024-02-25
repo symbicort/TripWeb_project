@@ -1,5 +1,3 @@
-import { UsersEntity } from 'src/users/entities/users-entity';
-
 export class BoardDto {
   post_id: number;
   title: string;
@@ -15,7 +13,6 @@ export class BoardDto {
 export class createBoardDto {
   title: string;
   content: string;
-  writer: string;
   post_img: string | undefined;
-  author: UsersEntity;
+  author: string;
 }

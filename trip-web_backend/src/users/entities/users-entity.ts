@@ -38,7 +38,7 @@ export class UsersEntity extends BaseEntity {
   @Column({ type: 'nvarchar', length: 100, nullable: true })
   profile_img: string;
 
-  @OneToMany(() => BoardsEntity, (board) => board.writer)
+  @OneToMany(() => BoardsEntity, (board) => board.author)
   boards: BoardsEntity[];
 
   @Column({ nullable: true })

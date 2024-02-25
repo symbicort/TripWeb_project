@@ -21,9 +21,6 @@ export class BoardsEntity extends BaseEntity {
   @Column({ type: 'nvarchar', length: 2000 })
   content: string;
 
-  @Column({ type: 'nvarchar', length: 20 })
-  writer: string;
-
   @CreateDateColumn()
   created_at: Date;
 
@@ -36,8 +33,8 @@ export class BoardsEntity extends BaseEntity {
   @Column({ nullable: true })
   post_img: string;
 
-  @ManyToOne(() => UsersEntity, (user) => user.boards)
-  author: UsersEntity;
+  @Column()
+  author: string;
 
   @Column({ default: 0 })
   like: number;

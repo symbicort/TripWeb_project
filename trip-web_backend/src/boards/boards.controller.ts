@@ -1,7 +1,6 @@
 import {
   Body,
   Controller,
-  Get,
   Post,
   Req,
   Res,
@@ -19,8 +18,6 @@ import { Repository } from 'typeorm';
 import { authUserDto } from 'src/users/dto/user.dto';
 import { AwsService } from 'src/aws/aws.service';
 import { FilesInterceptor } from '@nestjs/platform-express';
-import { create } from 'domain';
-import { S3 } from 'aws-sdk';
 
 @Controller('boards')
 export class BoardsController {
@@ -42,14 +39,15 @@ export class BoardsController {
   ) {
     try {
       console.log('이미지 업로드 요청 get');
-      let S3imgLink: string;
+      let S3imgLink = '';
 
       console.log('게시글 업로드 요청', files, post);
       const loginUser = await this.checkUser(req);
 
-      console.log('유저 정보확인', loginUser);
-      console.log('글 작성 데이터 확인', post);
-
+      if (!loginUser.result) {
+        res.status(401).send({ result: false, msg: '로그인 상태가 아닙니다.' });
+        return;
+      }
       for (let i = 0; i < files.length; i++) {
         const imgUpload = await this.awsService.imageUploadToS3(files[i]);
 
@@ -61,25 +59,26 @@ export class BoardsController {
       const createPost = await this.boardService.createBoard(
         req.body,
         S3imgLink,
+        loginUser.nickname,
       );
 
-      console.log('게시글 업로드', createPost);
+      res.send(createPost);
     } catch (err) {
       throw err;
     }
   }
 
-  async checkUser(req: Request): Promise<boolean | authUserDto> {
+  async checkUser(req: Request): Promise<authUserDto> {
     const loginToken = req.cookies.userKey;
 
     if (!loginToken) {
-      return false;
+      return { result: false };
     }
 
     const authLogin = await this.usersService.authUser(loginToken);
 
     if (!authLogin) {
-      return false;
+      return { result: false };
     }
 
     return authLogin;
