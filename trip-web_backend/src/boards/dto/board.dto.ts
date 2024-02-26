@@ -2,7 +2,6 @@ export class BoardDto {
   post_id: number;
   title: string;
   content: string;
-  writer: string;
   updated_at: Date;
   post_img: string;
   author: string;
@@ -15,4 +14,9 @@ export class createBoardDto {
   content: string;
   post_img: string | undefined;
   author: string;
+}
+
+export class resultBoardDto {
+  result: boolean;
+  msg?: string;
 }
