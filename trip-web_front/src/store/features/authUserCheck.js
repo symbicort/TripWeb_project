@@ -1,5 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { checkUserIdApi } from '../../api/authApi';
+import { checkUserIdApi, checkUserNicknameApi } from '../../api/authApi';
 
 const initialState = {
   isUserId: true,
@@ -14,6 +14,15 @@ export const checkUserId = (userId) => async (dispatch) => {
     console.error('사용자 아이디 중복 체크 실패:', error);
   }
 };
+
+export const checkUserNickname = (nickname) => async (dispatch) =>{
+  try{
+    const isAvailable = await checkUserNicknameApi(nickname);
+    dispatch(setNickname(isAvailable));
+}catch(error){
+  console.error('사용자 닉네임 중복 체크 실패:', error);
+}
+}
 
 const userCheckSlice = createSlice({
   name: 'userCheck',

@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { signupUser } from '../store/features/authSlice';
-import { checkUserId } from '../store/features/authUserCheck';
+import { checkUserId, checkUserNickname } from '../store/features/authUserCheck';
 import { useNavigate } from 'react-router-dom';
 import '../styles/Auth.css';
 
@@ -39,7 +39,22 @@ const Signup = () => {
 
   const handleCheckUserId = async () => {
     try {
-      const isAvailable = await dispatch(checkUserId(formData.user_id));
+      dispatch(checkUserId(formData.user_id));
+      setUserIdAvailable(isAvailable);
+      setIsFormValid(!isAvailable);
+      if (!isAvailable) {
+        alert('사용 가능한 아이디입니다.');
+      } else {
+        alert('이미 사용 중인 아이디입니다.');
+      }
+    } catch (error) {
+      console.error('아이디 중복 체크 에러:', error);
+    }
+  };
+
+  const handleCheckUserNickname = async () => {
+    try {
+      dispatch(checkUserNickname(formData.nickname));
       setUserIdAvailable(isAvailable);
       setIsFormValid(!isAvailable);
       if (!isAvailable) {
@@ -59,7 +74,8 @@ const Signup = () => {
       return;
     }
     try {
-      dispatch(signupUser(formData)).then(() => {
+      dispatch(signupUser(formData))
+      .then(() => {
         navigate('/');
       });
     } catch (error) {
@@ -110,7 +126,12 @@ const Signup = () => {
           onChange={handleInputChange}
           required
         />
+          <button type="button" onClick={handleCheckUserNickname}>
+          닉네임 중복 확인
+        </button>
+        {!userIdAvailable && <p>이미 사용 중인 아이디입니다.</p>}
       </div>
+      
 
       <div className="control-row">
         <div className="control">
