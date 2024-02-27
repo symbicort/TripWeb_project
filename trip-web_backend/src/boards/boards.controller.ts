@@ -75,38 +75,38 @@ export class BoardsController {
     return postData;
   }
 
-  @Get('/')
-  async getAllPost(): Promise<BoardDto> {
-    const post = await this.boardService.getAllPost();
+  // @Get('/')
+  // async getAllPost(): Promise<BoardDto> {
+  //   const post = await this.boardService.getAllPost();
 
-    console.log(post);
-  }
+  //   console.log(post);
+  // }
 
-  @Delete(':id')
-  async DeletePost(
-    @Param('id') id: number,
-    @Req() req: Request,
-    @Res() res: Response,
-    @Body('author') author: string,
-  ): Promise<boolean> {
-    try {
-      const loginUser = await this.checkUser(req);
+  // @Delete(':id')
+  // async DeletePost(
+  //   @Param('id') id: number,
+  //   @Req() req: Request,
+  //   @Res() res: Response,
+  //   @Body('author') author: string,
+  // ): Promise<boolean> {
+  //   try {
+  //     const loginUser = await this.checkUser(req);
 
-      if (!loginUser.result) {
-        res.status(401).send({ result: false, msg: '로그인 상태가 아닙니다.' });
-        return;
-      }
+  //     if (!loginUser.result) {
+  //       res.status(401).send({ result: false, msg: '로그인 상태가 아닙니다.' });
+  //       return;
+  //     }
 
-      if (author !== loginUser.nickname) {
-        res.status(401).send({ result: false, msg: '다른 유저의 글입니다.' });
-        return;
-      }
+  //     if (author !== loginUser.nickname) {
+  //       res.status(401).send({ result: false, msg: '다른 유저의 글입니다.' });
+  //       return;
+  //     }
 
-      const result = await this.boardService.deletePost(id);
-    } catch (err) {
-      throw err;
-    }
-  }
+  //     const result = await this.boardService.deletePost(id);
+  //   } catch (err) {
+  //     throw err;
+  //   }
+  // }
 
   async checkUser(req: Request): Promise<authUserDto> {
     const loginToken = req.cookies.userKey;
