@@ -44,6 +44,7 @@ export class BoardsService {
     return postData;
   }
 
+  // 수정 예정
   // async getAllPost(): Promise<BoardDto> {
   //   const postData = await this.boardsDB.find({
   //     select: ['post_id', 'title', 'content', 'updated_at'],
