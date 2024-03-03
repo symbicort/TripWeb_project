@@ -75,6 +75,7 @@ export class BoardsController {
     return postData;
   }
 
+  // 추가 예정
   // @Get('/')
   // async getAllPost(): Promise<BoardDto> {
   //   const post = await this.boardService.getAllPost();
