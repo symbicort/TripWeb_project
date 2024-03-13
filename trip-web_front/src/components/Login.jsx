@@ -26,13 +26,9 @@ const Login = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-  
-    try {
       await dispatch(loginUser(formData));
       navigate('/');
-    } catch (error) {
-      console.error('로그인 에러:', error);
-    }
+  
   };
 
 

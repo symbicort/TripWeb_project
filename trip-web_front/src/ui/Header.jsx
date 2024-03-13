@@ -119,7 +119,7 @@ const Icon = styled.span`
 const Header = () => {
   const dispatch = useDispatch();
   const [menuOpen, setMenuOpen] = useState(false);
-  const isLogging = useSelector((state) => state.login.isLoggedIn);
+
 
   const toggleMenu = () => {
     setMenuOpen(!menuOpen);
@@ -128,6 +128,9 @@ const Header = () => {
   const handleLogout = () => {
     dispatch(logoutUser());
   };
+
+  const isLogging = useSelector((state) => state.login.isLoggedIn);
+  const userLoad = useSelector((state) => state.login.user)
 
   return (
     <NavContainer>
@@ -154,6 +157,7 @@ const Header = () => {
           <ul>
             <li>
               <button onClick={handleLogout}>Logout</button>
+              <li>{userLoad && user.userId}1</li>
             </li>
             <li>
               <a href='/'>

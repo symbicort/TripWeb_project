@@ -1,43 +1,59 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { checkUserIdApi, checkUserNicknameApi } from '../../api/authApi';
+import { userIdCheckApi, userNicknameCheckApi } from '../../api/authApi';
 
 const initialState = {
-  isUserId: true,
-  isNickname: true,
+  isUserIdAvailable: false,
+  isNicknameAvailable: false,
+  loading: false,
+  error: null,
 };
-
-export const checkUserId = (userId) => async (dispatch) => {
-  try {
-    const isAvailable = await checkUserIdApi(userId); 
-    dispatch(setUserId(isAvailable));
-  } catch (error) {
-    console.error('사용자 아이디 중복 체크 실패:', error);
-  }
-};
-
-export const checkUserNickname = (nickname) => async (dispatch) =>{
-  try{
-    const isAvailable = await checkUserNicknameApi(nickname);
-    dispatch(setNickname(isAvailable));
-}catch(error){
-  console.error('사용자 닉네임 중복 체크 실패:', error);
-}
-}
 
 const userCheckSlice = createSlice({
   name: 'userCheck',
   initialState,
   reducers: {
-    setUserId: (state, action) => {
-      state.isUserId = action.payload;
+    setUserIdAvailability: (state, action) => {
+      state.isUserIdAvailable = action.payload;
+      state.loading = false;
     },
-    setNickname: (state, action) => {
-      state.isNickname = action.payload;
+    setNicknameAvailability: (state, action) => {
+      state.isNicknameAvailable = action.payload;
+      state.loading = false;
+    },
+    setError: (state, action) => {
+      state.error = action.payload;
+      state.loading = false;
+    },
+    setLoading: (state) => {
+      state.loading = true;
     },
   },
 });
 
-export const { setUserId, setNickname } = userCheckSlice.actions;
+export const { setUserIdAvailability, setNicknameAvailability, setError, setLoading } = userCheckSlice.actions;
 
+export const checkUserId = (userId) => async (dispatch) => {
+  dispatch(setLoading());
+  try {
+    const isAvailable = await userIdCheckApi(userId); 
+    dispatch(setUserIdAvailability(isAvailable));
+    return isAvailable;
+  } catch (error) {
+    dispatch(setError(error.message));
+    throw error;
+  }
+};
+
+export const checkUserNickname = (nickname) => async (dispatch) =>{
+  dispatch(setLoading());
+  try {
+    const isAvailable = await userNicknameCheckApi(nickname);
+    dispatch(setNicknameAvailability(isAvailable));
+    return isAvailable;
+  } catch (error) {
+    dispatch(setError(error.message));
+    throw error;
+  }
+};
 
 export default userCheckSlice.reducer;

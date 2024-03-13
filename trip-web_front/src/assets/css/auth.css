@@ -1,0 +1,19 @@
+.authForm{
+  @apply rounded-md p-6 pb-11 w-6/12 mx-auto border border-gray-300
+}
+
+.authInput{
+    @apply  border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500
+  }
+
+  .authCheckbox{
+    @apply mr-5 ml-1 mt-2
+  }
+
+.authLable{
+  @apply block mb-2 mt-4 text-sm font-medium text-gray-900 dark:text-white
+}
+
+.authSpan{
+  @apply text-red-500 text-xs
+}

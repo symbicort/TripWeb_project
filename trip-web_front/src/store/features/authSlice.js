@@ -1,5 +1,5 @@
-import { createSlice } from '@reduxjs/toolkit';
-import { signup } from '../../api/authApi'; 
+import { createSlice } from "@reduxjs/toolkit";
+import { signupApi } from "../../api/authApi"; 
 
 const initialState = {
   user: null,
@@ -7,35 +7,35 @@ const initialState = {
   error: null,
 };
 
-const authSlice = createSlice({
-  name: 'auth',
+const signUpSlice = createSlice({
+  name: "signUp",
   initialState,
   reducers: {
-    signupStart: (state) => {
+    signUpStart: (state) => {
       state.loading = true;
       state.error = null;
     },
-    signupSuccess: (state, action) => {
+    signUpSuccess: (state, action) => {
       state.loading = false;
       state.user = action.payload;
     },
-    signupFailure: (state, action) => {
+    signUpError: (state, action) => {
       state.loading = false;
       state.error = action.payload;
     },
   },
 });
 
-export const { signupStart, signupSuccess, signupFailure } = authSlice.actions;
+export const { signUpStart, signUpSuccess, signUpError } = signUpSlice.actions;
 
-export const signupUser = (userData) => async (dispatch) => {
+export const signUpUser = (userdata) => async (dispatch) => {
   try {
-    dispatch(signupStart());
-    const user = await signup(userData); 
-    dispatch(signupSuccess(user));
+    dispatch(signUpStart());
+    const user = await signupApi(userdata);
+    dispatch(signUpSuccess(user));
   } catch (error) {
-    dispatch(signupFailure(error));
+    dispatch(signUpError(error.message));
   }
 };
 
-export default authSlice.reducer;
+export default signUpSlice.reducer;

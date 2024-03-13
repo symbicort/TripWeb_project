@@ -1,199 +1,158 @@
-import { useState } from 'react';
+import React, { useEffect } from 'react';
+import { useForm } from 'react-hook-form';
 import { useDispatch } from 'react-redux';
-import { signupUser } from '../store/features/authSlice';
+import { signUpUser } from '../store/features/authSlice';
 import { checkUserId, checkUserNickname } from '../store/features/authUserCheck';
-import { useNavigate } from 'react-router-dom';
-import '../styles/Auth.css';
+// import '../assets/css/auth.css';
 
-const Signup = () => {
-  const navigate = useNavigate();
+export default function SignUp() {
   const dispatch = useDispatch();
-  const [formData, setFormData] = useState({
-    user_id: '',
-    password: '',
-    email: '',
-    confirmPassword: '',
-    nickname: '',
-    fullName: '',
-    terms: false,
-  });
 
-  const [userIdAvailable, setUserIdAvailable] = useState(true);
-  const [isFormValid, setIsFormValid] = useState(false);
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    watch,
+  } = useForm();
 
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prevData) => ({
-      ...prevData,
-      [name]: value,
-    }));
+  const onSubmit = (userdata) => {
+    console.log('onSubmit', userdata);
+    dispatch(signUpUser(userdata));
   };
 
-  const handleCheckboxChange = (e) => {
-    const { name, checked } = e.target;
-    setFormData((prevData) => ({
-      ...prevData,
-      [name]: checked,
-    }));
+  const onError = (errors) => {
+    console.log('onError', errors);
   };
 
-  const handleCheckUserId = async () => {
-    try {
-      dispatch(checkUserId(formData.user_id));
-      setUserIdAvailable(isAvailable);
-      setIsFormValid(!isAvailable);
-      if (!isAvailable) {
-        alert('사용 가능한 아이디입니다.');
-      } else {
-        alert('이미 사용 중인 아이디입니다.');
-      }
-    } catch (error) {
-      console.error('아이디 중복 체크 에러:', error);
+  const userId = watch('user_id');
+  const nickname = watch('nickname');
+
+  useEffect(() => {
+    if (userId) {
+      dispatch(checkUserId(userId));
     }
-  };
+  }, [userId, dispatch]);
 
-  const handleCheckUserNickname = async () => {
-    try {
-      dispatch(checkUserNickname(formData.nickname));
-      setUserIdAvailable(isAvailable);
-      setIsFormValid(!isAvailable);
-      if (!isAvailable) {
-        alert('사용 가능한 아이디입니다.');
-      } else {
-        alert('이미 사용 중인 아이디입니다.');
-      }
-    } catch (error) {
-      console.error('아이디 중복 체크 에러:', error);
+  useEffect(() => {
+    if (nickname) {
+      dispatch(checkUserNickname(nickname));
     }
-  };
+  }, [nickname, dispatch]);
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (!isFormValid) {
-      alert('양식을 올바르게 입력하세요.');
-      return;
-    }
-    try {
-      dispatch(signupUser(formData))
-      .then(() => {
-        navigate('/');
-      });
-    } catch (error) {
-      console.log('error ', error);
-    }
-  };
+
 
   return (
-    <form onSubmit={handleSubmit}>
-      <h2>어서오고!</h2>
-      <p>로그인 해주세요! 🚀</p>
-
-      <div className="control">
-        <label htmlFor="fullName">성명</label>
+    <>
+      <form onSubmit={handleSubmit(onSubmit, onError)}>
+        <label htmlFor="username">이름</label>
         <input
-          id="fullName"
           type="text"
-          name="fullName"
-          value={formData.fullName}
-          onChange={handleInputChange}
-          required
+          id="username"
+          placeholder="이름을 입력해주세요"
+          {...register('username', {
+            required: '이름을 입력해주세요',
+            minLength: {
+              message: '이름은 최소 2글자 이상 작성해주세요',
+              value: 2,
+            },
+          })}
         />
-      </div>
+        {errors.username && <span role="alert">{errors.username.message}</span>}
 
-      <div className="control">
         <label htmlFor="user_id">아이디</label>
         <input
+          type="text"
           id="user_id"
-          type="text"
-          name="user_id"
-          value={formData.user_id}
-          onChange={handleInputChange}
-          required
+          placeholder="ID를 입력해주세요"
+          {...register('user_id', {
+            required: 'ID를 입력해주세요',
+          })}
         />
-        <button type="button" onClick={handleCheckUserId}>
-          아이디 중복 확인
-        </button>
-        {!userIdAvailable && <p>이미 사용 중인 아이디입니다.</p>}
-      </div>
+        {errors.user_id && <span role="alert">{errors.user_id.message}</span>}
+        {userId && <span> {userId}은(는) 사용 가능한 아이디입니다.</span>}
 
-      <div className="control">
-        <label htmlFor="nickname">닉네임</label>
+        <label htmlFor='nickname'>닉네임</label>
         <input
-          id="nickname"
-          type="text"
-          name="nickname"
-          value={formData.nickname}
-          onChange={handleInputChange}
-          required
+          type='text'
+          id='nickname'
+          placeholder='닉네임을 입력해주세요'
+          {...register('nickname',{
+            required : '닉네임을 입력해주세요'
+          })}
         />
-          <button type="button" onClick={handleCheckUserNickname}>
-          닉네임 중복 확인
-        </button>
-        {!userIdAvailable && <p>이미 사용 중인 아이디입니다.</p>}
-      </div>
-      
+        {errors.nickname && <span role='alert'>{errors.nickname.message}</span>}
+        {nickname && <span>{nickname}은(는) 사용 가능한 닉네임입니다.</span>}
 
-      <div className="control-row">
-        <div className="control">
-          <label htmlFor="password">비밀번호</label>
-          <input
-            id="password"
-            type="password"
-            name="password"
-            value={formData.password}
-            onChange={handleInputChange}
-            required
-          />
-        </div>
+        <label htmlFor="email">이메일</label>
+        <input
+          type="email"
+          id="email"
+          placeholder="이메일 주소"
+          {...register('email', {
+            required: '이메일을 입력해주세요',
+            pattern: {
+              value: /\S+@\S+\.\S+/,
+              message: '유효한 이메일 주소를 입력하세요',
+            },
+          })}
+        />
+        {errors.email && <span role="alert">{errors.email.message}</span>}
 
-        <div className="control">
-          <label htmlFor="confirmPassword">비밀번호 확인</label>
-          <input
-            id="confirmPassword"
-            type="password"
-            name="confirmPassword"
-            value={formData.confirmPassword}
-            onChange={handleInputChange}
-            required
-          />
-        </div>
+        <label htmlFor="password">비밀번호</label>
+        <input
+          type="password"
+          id="password"
+          placeholder="'영문, 숫자, 대문자, 특수문자 포함 8자리 이상'"
+          {...register('password', {
+            required: '비밀번호를 입력하세요',
+            minLength: {
+              value: 8,
+              message: '비밀번호는 8자 이상이어야 합니다',
+            },
+            validate: (value) => {
+              const pwNumber = /\d/.test(value);
+              const pwUpperCase = /[A-Z]/.test(value);
+              const pwLowerCase = /[a-z]/.test(value);
+              const pwSpecialChar = /[!@#$%^&*]/.test(value);
+              return (
+                pwNumber &&
+                pwUpperCase &&
+                pwLowerCase &&
+                pwSpecialChar ||
+                '비밀번호는 숫자, 대문자, 소문자, 특수문자를 포함해야 합니다'
+              );
+            },
+          })}
+        />
+        {errors.password && <span role="alert">{errors.password.message}</span>}
 
-        <div className="control">
-          <label htmlFor="email">이메일</label>
-          <input
-            id="email"
-            type="text"
-            name="email"
-            value={formData.email}
-            onChange={handleInputChange}
-            required
-          />
-        </div>
-      </div>
+        <label htmlFor="confirmPassword">비밀번호 확인</label>
+        <input
+          type="password"
+          id="confirmPassword"
+          placeholder="비밀번호와 동일하게 입력해주세요"
+          {...register('confirmPassword', {
+            required: '비밀번호를 한번 더 입력해주세요',
+            validate: (value) =>
+              value === watch('password') || '비밀번호가 일치하지 않습니다',
+          })}
+        />
+        {errors.confirmPassword && (
+          <span role="alert">{errors.confirmPassword.message}</span>
+        )}
 
-      <div className="control">
-        <label>
+        <div>
+          <label htmlFor="agree">위에 약관에 동의하십니까?</label>
           <input
             type="checkbox"
-            name="terms"
-            checked={formData.terms}
-            onChange={handleCheckboxChange}
-            required
+            id="agree"
+            {...register('agree', { required: '약관에 동의해주세요' })}
           />
-          위에 약관에 동의하십니까?
-        </label>
-      </div>
-
-      <p className="form-actions">
-        <button type="reset" className="button button-flat">
-          Reset
-        </button>
-        <button type="submit" className="button" disabled={!isFormValid}>
-          회원가입
-        </button>
-      </p>
-    </form>
+          {errors.agree && <span role="alert">{errors.agree.message}</span>}
+        </div>
+        
+        <button type="submit">가입하기</button>
+      </form>
+    </>
   );
-};
-
-export default Signup;
+}
