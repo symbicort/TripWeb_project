@@ -35,8 +35,12 @@ export const { setUserIdAvailability, setNicknameAvailability, setError, setLoad
 export const checkUserId = (userId) => async (dispatch) => {
   dispatch(setLoading());
   try {
-    const isAvailable = await userIdCheckApi(userId); 
-    dispatch(setUserIdAvailability(isAvailable));
+    const isAvailable = await userIdCheckApi(userId);
+    if (isAvailable) {
+      dispatch(setUserIdAvailability(true)); 
+    } else {
+      dispatch(setUserIdAvailability(false)); 
+    }
     return isAvailable;
   } catch (error) {
     dispatch(setError(error.message));

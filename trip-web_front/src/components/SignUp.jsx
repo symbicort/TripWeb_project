@@ -28,13 +28,13 @@ export default function SignUp() {
   const nickname = watch('nickname');
 
   useEffect(() => {
-    if (userId) {
+    if(userId){
       dispatch(checkUserId(userId));
     }
   }, [userId, dispatch]);
 
   useEffect(() => {
-    if (nickname) {
+    if(nickname){
       dispatch(checkUserNickname(nickname));
     }
   }, [nickname, dispatch]);
@@ -69,7 +69,7 @@ export default function SignUp() {
           })}
         />
         {errors.user_id && <span role="alert">{errors.user_id.message}</span>}
-        {userId && <span> {userId}은(는) 사용 가능한 아이디입니다.</span>}
+        {userId && <span>{userId}은(는) 사용 가능한 아이디입니다.</span>}
 
         <label htmlFor='nickname'>닉네임</label>
         <input
@@ -94,7 +94,7 @@ export default function SignUp() {
               value: /\S+@\S+\.\S+/,
               message: '유효한 이메일 주소를 입력하세요',
             },
-          })}
+          })} autoComplete='new-email'
         />
         {errors.email && <span role="alert">{errors.email.message}</span>}
 
@@ -122,7 +122,7 @@ export default function SignUp() {
                 '비밀번호는 숫자, 대문자, 소문자, 특수문자를 포함해야 합니다'
               );
             },
-          })}
+          })} autoComplete='new-password'
         />
         {errors.password && <span role="alert">{errors.password.message}</span>}
 
@@ -135,7 +135,7 @@ export default function SignUp() {
             required: '비밀번호를 한번 더 입력해주세요',
             validate: (value) =>
               value === watch('password') || '비밀번호가 일치하지 않습니다',
-          })}
+          })} autoComplete='new-confirmPassword'
         />
         {errors.confirmPassword && (
           <span role="alert">{errors.confirmPassword.message}</span>
