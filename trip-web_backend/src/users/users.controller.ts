@@ -41,8 +41,9 @@ export class UsersController {
   @Get('/checkDupId')
   async checkDupId(@Req() req: Request): Promise<boolean> {
     try {
-      console.log(req.query);
-      const inputId: string = req.query.inputId as string;
+      console.log('controller start',req.query);
+      const inputId: string = req.query.userId as string;
+      console.log('INPUT ID CHK', inputId);
 
       if (!inputId) {
         return false;
