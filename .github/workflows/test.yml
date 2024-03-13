@@ -15,7 +15,7 @@ jobs:
         with:
           host: ${{ secrets.SERVER_IP }} # 인스턴스 IP
           username: ${{ secrets.SERVER_USER }} # 우분투 아이디
-          key: ${{ secrets.SERVER_PRIVATE_KEY }} # ec2 instance pem key
+          key: ${{ secrets.PRIVATE_KEY }} # ec2 instance pem key
           port: ${{ secrets.SERVER_PORT }} # 접속포트 변경
           script: | # 실행할 스크립트
             cd /home/ubuntu/TripWeb_project
