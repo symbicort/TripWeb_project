@@ -148,6 +148,7 @@ export class UsersController {
     }
   }
 
+  // 유저 info
   @Post('/info')
   async getUserInfo(@Req() req: Request, @Res() res: Response): Promise<void> {
     try {
