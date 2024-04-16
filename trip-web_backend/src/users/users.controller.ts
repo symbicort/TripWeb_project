@@ -148,6 +148,7 @@ export class UsersController {
     }
   }
 
+  // 유저 정보 확인
   @Post('/info')
   async getUserInfo(@Req() req: Request, @Res() res: Response): Promise<void> {
     try {
