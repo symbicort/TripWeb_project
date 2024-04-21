@@ -156,7 +156,7 @@ export class UsersController {
 
       if (logintoken) {
         const result: userInfoDto =
-          // 유저 정보 불러오기
+          // 유저 정보 불러오기 - /user/info
           await this.userService.getUserInfo(logintoken);
 
         res.send({
