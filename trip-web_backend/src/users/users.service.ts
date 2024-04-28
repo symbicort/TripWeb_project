@@ -34,6 +34,7 @@ export class UsersService {
 
     const password = hashPW(registerInfo.password);
 
+    // try-catch
     try {
       await this.usersDB.insert({
         user_id,
