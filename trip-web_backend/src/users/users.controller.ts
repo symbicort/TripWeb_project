@@ -95,8 +95,6 @@ export class UsersController {
         maxAge: 7 * 24 * 60 * 60 * 1000,
       });
 
-      console.log(res);
-
       res.send({ result: result.result, msg: result.msg });
     } catch (err) {
       throw err;

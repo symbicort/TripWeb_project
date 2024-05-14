@@ -9,6 +9,7 @@ import { CommentEntity } from './boards/entities/comment-entity';
 import { AuthModule } from './auth/auth.module';
 // import { RedisModule } from '@liaoliaots/nestjs-redis';
 import { AwsModule } from './aws/aws.module';
+import { ColorChatModule } from './color-chat/color-chat.module';
 
 @Module({
   imports: [
@@ -31,6 +32,7 @@ import { AwsModule } from './aws/aws.module';
     BoardsModule,
     AuthModule,
     AwsModule,
+    ColorChatModule,
   ],
   controllers: [],
   providers: [],
