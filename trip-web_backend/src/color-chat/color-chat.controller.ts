@@ -8,8 +8,7 @@ export class ColorChatController {
 
   @Post('/chat')
   async testChat(@Body() data: chatTestDto) {
-    console.log(data.content);
-    // const result = await this.colorChatService.sendMessage(req.body.content);
-    // console.log(result);
+    const result = await this.colorChatService.sendMessage(data.content);
+    // console.log('채팅 결과', result);
   }
 }

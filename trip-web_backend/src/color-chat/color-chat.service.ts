@@ -32,7 +32,10 @@ export class ColorChatService {
   async sendMessage(content: string) {
     console.log(content);
     const streamResult = await this.chat.sendMessageStream(content);
-    console.log(streamResult);
+    console.log(
+      '채팅 결과',
+      (await streamResult.response).candidates[0].content.parts[0].text,
+    );
     process.stdout.write(
       'stream result: ' +
         JSON.stringify((await streamResult.response).candidates[0].content) +
