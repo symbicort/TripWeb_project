@@ -29,6 +29,7 @@ export class ColorChatService {
     this.chat = this.generativeModel.startChat({});
   }
 
+  // API 호출 코드 -- 주석 추가
   async sendMessage(content: string) {
     console.log(content);
     const streamResult = await this.chat.sendMessageStream(content);
