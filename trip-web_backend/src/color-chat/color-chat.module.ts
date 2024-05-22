@@ -4,6 +4,6 @@ import { ColorChatService } from './color-chat.service';
 
 @Module({
   controllers: [ColorChatController],
-  providers: [ColorChatService]
+  providers: [ColorChatService],
 })
 export class ColorChatModule {}
