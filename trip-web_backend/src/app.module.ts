@@ -10,6 +10,8 @@ import { AuthModule } from './auth/auth.module';
 // import { RedisModule } from '@liaoliaots/nestjs-redis';
 import { AwsModule } from './aws/aws.module';
 import { ColorChatModule } from './color-chat/color-chat.module';
+import { ServeStaticModule } from '@nestjs/serve-static';
+import { join } from 'path';
 
 @Module({
   imports: [
@@ -33,6 +35,9 @@ import { ColorChatModule } from './color-chat/color-chat.module';
     AuthModule,
     AwsModule,
     ColorChatModule,
+    ServeStaticModule.forRoot({
+      rootPath: join(__dirname, '..', 'public'),
+    }),
   ],
   controllers: [],
   providers: [],

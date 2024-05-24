@@ -1,13 +1,16 @@
-import { Body, Controller, Post, Req } from '@nestjs/common';
+import { Body, Controller, Post } from '@nestjs/common';
 import { ColorChatService } from './color-chat.service';
-import { chatResultDto, chatTestDto } from './color-chat.model';
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+import { ChatRequestDto, chatResultDto } from './color-chat.model';
 
 @Controller('color-chat')
 export class ColorChatController {
   constructor(private colorChatService: ColorChatService) {}
 
   @Post('/chat')
-  async testChat(@Body() data: chatTestDto): Promise<chatResultDto> {
-    return await this.colorChatService.sendMessage(data.content);
+  async testChat(
+    @Body() ChatRequestDto: ChatRequestDto,
+  ): Promise<chatResultDto> {
+    return await this.colorChatService.sendMessage(ChatRequestDto);
   }
 }
