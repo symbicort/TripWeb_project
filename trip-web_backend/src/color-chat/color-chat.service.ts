@@ -16,6 +16,7 @@ export class ColorChatService {
       project: 'warm-ring-416301',
       location: 'asia-northeast3',
     });
+    // 모델
     this.model = 'gemini-1.5-pro-preview-0514';
 
     // Instantiate the models
