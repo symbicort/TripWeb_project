@@ -1,4 +1,4 @@
-import { IsEnum } from 'class-validator';
+import { IsArray, IsEnum } from 'class-validator';
 import {
   Color_Survey_Record_Decision_Criteria_Type_Enum,
   Color_Survey_Record_Personality_Type_Enum,
@@ -11,7 +11,7 @@ export class chatTestDto {
 }
 
 export class chatResultDto {
-  user_name: string;
+  nickname: string;
   mainColor: string;
   summary1: string;
   Summary1_Content: string;
@@ -29,21 +29,16 @@ export class chatResultDto {
 }
 
 export class ChatRequestDto {
-  user_name: string;
+  nickname: string;
   age: number;
   @IsEnum(Color_Survey_Record_Season_Type_Enum)
-  season: Color_Survey_Record_Season_Type_Enum;
-  @IsEnum(Color_Survey_Record_Personality_Type_Enum)
-  personality_type1: Color_Survey_Record_Personality_Type_Enum;
-  @IsEnum(Color_Survey_Record_Personality_Type_Enum)
-  personality_type2: Color_Survey_Record_Personality_Type_Enum;
-  @IsEnum(Color_Survey_Record_Personality_Type_Enum)
-  personality_type3: Color_Survey_Record_Personality_Type_Enum;
-  @IsEnum(Color_Survey_Record_Decision_Criteria_Type_Enum)
-  Decision_type: Color_Survey_Record_Decision_Criteria_Type_Enum;
+  season_type: Color_Survey_Record_Season_Type_Enum;
+  @IsArray()
+  personality_type: Color_Survey_Record_Personality_Type_Enum[];
+  decision_criteria_type: Color_Survey_Record_Decision_Criteria_Type_Enum;
   @IsEnum(Color_Survey_Record_Travel_Type_Enum)
   travel_type: Color_Survey_Record_Travel_Type_Enum;
-  happy_moment: string;
+  routine_best_happy: string;
   wakeup_morning: string;
   hobby: string;
 }
