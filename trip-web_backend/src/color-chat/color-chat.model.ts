@@ -9,7 +9,7 @@ import {
 export class chatTestDto {
   content: string;
 }
-// 결과 Dto
+// 결과 DTO
 export class chatResultDto {
   nickname: string;
   mainColor: string;
