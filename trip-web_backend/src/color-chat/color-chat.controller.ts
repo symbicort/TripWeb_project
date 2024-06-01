@@ -8,9 +8,7 @@ export class ColorChatController {
   constructor(private colorChatService: ColorChatService) {}
 
   @Post('/chat')
-  async testChat(
-    @Body() ChatRequestDto: ChatRequestDto,
-  ): Promise<chatResultDto> {
+  async testChat(@Body() ChatRequestDto: ChatRequestDto): Promise<string> {
     return await this.colorChatService.sendMessage(ChatRequestDto);
   }
 }

@@ -34,11 +34,11 @@ export class ChatRequestDto {
   @IsEnum(Color_Survey_Record_Season_Type_Enum)
   season_type: Color_Survey_Record_Season_Type_Enum;
   @IsArray()
-  personality_type: Color_Survey_Record_Personality_Type_Enum[];
+  personality_types: Color_Survey_Record_Personality_Type_Enum[];
   decision_criteria_type: Color_Survey_Record_Decision_Criteria_Type_Enum;
   @IsEnum(Color_Survey_Record_Travel_Type_Enum)
   travel_type: Color_Survey_Record_Travel_Type_Enum;
   routine_best_happy: string;
-  wakeup_morning: string;
-  hobby: string;
+  morning_phone_hobby_first_check: string;
+  favorite_hobby: string;
 }
