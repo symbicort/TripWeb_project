@@ -12,7 +12,7 @@ export class ColorChatService {
 
   constructor() {
     this.vertex_ai = new VertexAI({
-      project: 'warm-ring-416301',
+      project: 'shaped-radius-425312-c5',
       location: 'asia-northeast3',
     });
     // 모델
