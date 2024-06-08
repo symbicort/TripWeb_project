@@ -73,7 +73,7 @@ export class ColorChatService {
       // Answers must be answered in the form between only [] below and no hex code all answer is only korean and Just answer what’s inside and don’t include [] in the answer. And if you’re not going to keep the above, don’t answer
       // [<h2>{Username}</h2><br> <h2>{Hex value of best color} </h2><br><h2>{A name representing the best color}</h2><br><h2>성격과 색상의 조화</h2><br><p>{Best color metaphor 1 interpretation (written with 300 or more characters and less than 550 characters)}<p> <h2>{Short metaphor of the best colors}</h2><br><p>{Description of the best color based on the answers to the questions (written with 300 or more characters and less than 550 characters)}<p>{Comprehensive interpretation of all questions}<p><p>{Interpretation from question 7}<p><p>{Interpretation from question 8}<p><p>{Interpretation from question 9}<p><h2>{Hex color of color that mismatched color above}</h2><br><p>{Short metaphor of best and the most matching color(It must be a different color from the best color)}<p><p>{Interpretation of the best color and the most matching color and an explanation of why they match(written in 300 or more and less than 550 characters)}<p>]`;
 
-      console.log('요청 메시지', request_message);
+      console.log('to vertax 요청 메시지', request_message);
 
       const streamResult = await this.chat.sendMessageStream(request_message);
       console.log(
