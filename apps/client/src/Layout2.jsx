@@ -5,12 +5,11 @@ import Box from '@mui/material/Box';
 
 const Layout = () => {
   return (
-    // 메인페이지만 사용
     <Container maxWidth="100%">
-      <Box>
+      <Box sx={{ position: 'relative' }}>
           <Header/>
           <Box sx={{ bgcolor: '#cfe22fc', width : '100%', height: '100vh', margin: '0', padding : '0'}}>
-            <Outlet/>
+            <Outlet />
           </Box>
       </Box>
     </Container>
