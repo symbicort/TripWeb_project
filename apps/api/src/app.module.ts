@@ -36,7 +36,7 @@ import { join } from 'path';
     AwsModule,
     ColorChatModule,
     ServeStaticModule.forRoot({
-      rootPath: join(__dirname, '..', 'public'),
+      rootPath: join(__dirname, '../..', 'client', 'dist'),
     }),
   ],
   controllers: [],
