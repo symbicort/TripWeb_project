@@ -1,19 +1,19 @@
-import { Outlet } from 'react-router-dom'; 
+import { Outlet } from 'react-router-dom';
 import Header from './components/Header';
 import Container from '@mui/material/Container';
 import Box from '@mui/material/Box';
 
-const Layout = () => {
+const Layout2 = () => {
   return (
-    <Container maxWidth="100%">
-      <Box sx={{ position: 'relative' }}>
-          <Header/>
-          <Box sx={{ bgcolor: '#cfe22fc', width : '100%', height: '100vh', margin: '0', padding : '0'}}>
-            <Outlet />
-          </Box>
+    <Container maxWidth="xl">
+      <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
+        <Header sx={{ position: 'sticky', top: 0, zIndex: 1000 }} />
+        <Box sx={{ flexGrow: 1, flexDirection: 'column',display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <Outlet />
+        </Box>
       </Box>
     </Container>
   );
 };
 
-export default Layout;
+export default Layout2;
