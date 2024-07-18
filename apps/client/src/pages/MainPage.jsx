@@ -10,7 +10,7 @@ const data = [
     description: "Enjoy the serene beauty of the beach.",
   },
   {
-    image: "https://images.unsplash.com/photo-1493558103817-58b2924bce98?auto=format&fit=crop&w=1400",
+    image: "https://images.unsplash.com/photo-1564419431636-fe02f0eff7aa?q=80&w=2568&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D?auto=format&fit=crop&w=1400",
     title: "Sunset View",
     description: "Experience the breathtaking sunset.",
   },

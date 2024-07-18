@@ -5,7 +5,9 @@ import ProductHeroLayout from './MainModule/ProductHeroLayout';
 const backgroundImage =
   'https://images.unsplash.com/photo-1534854638093-bada1813ca19?auto=format&fit=crop&w=1400';
 
-export default function ProductHero({ image, title, description }) {
+export default function ProductHero({ image, title, description, isVideo }) {
+  console.log('메인 타이틀', title)
+
   return (
     <ProductHeroLayout
       sxBackground={{
@@ -15,13 +17,20 @@ export default function ProductHero({ image, title, description }) {
         height : '100vh',
       }}
     >
-      <img
+      {isVideo ? (<video
+          style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+          autoPlay
+          loop
+          muted
+          src={image}
+        />) : (<img
         style={{ display: 'none', height:'100%' }}
         src={backgroundImage}
         alt="increase priority"
-      />
-      <Typography color="inherit" align="center" variant="h2" marked="center">
-        Upgrade your Sundays
+      />)}
+      
+      <Typography color="inherit" align="center" variant="h2">
+        {title}
       </Typography>
       <Typography
         color="inherit"
@@ -30,7 +39,7 @@ export default function ProductHero({ image, title, description }) {
         sx={{ mb: 4, mt: { xs: 4, sm: 10 } }}
         
       >
-        Enjoy secret offers up to -70% off the best luxury hotels every Sunday.
+        {description}
       </Typography>
       <Button
         color="secondary"
@@ -40,7 +49,7 @@ export default function ProductHero({ image, title, description }) {
         href="/premium-themes/onepirate/sign-up/"
         sx={{ minWidth: 200 }}
       >
-        Register
+        체험하기
       </Button>
       <Typography variant="body2" color="inherit" sx={{ mt: 2 }}>
         Discover the experience
