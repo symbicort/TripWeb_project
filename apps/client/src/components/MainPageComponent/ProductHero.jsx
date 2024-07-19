@@ -1,6 +1,7 @@
 import Button from './MainModule/ProducHeroBtn';
 import Typography from './MainModule/Typography';
 import ProductHeroLayout from './MainModule/ProductHeroLayout';
+import Box from '@mui/material/Box';
 
 const backgroundImage =
   'https://images.unsplash.com/photo-1534854638093-bada1813ca19?auto=format&fit=crop&w=1400';
@@ -29,6 +30,7 @@ export default function ProductHero({ image, title, description, isVideo }) {
         alt="increase priority"
       />)}
       
+      <Box textAlign={'center'} mt={20}>
       <Typography color="inherit" align="center" variant="h2">
         {title}
       </Typography>
@@ -36,7 +38,7 @@ export default function ProductHero({ image, title, description, isVideo }) {
         color="inherit"
         align="center"
         variant="h5"
-        sx={{ mb: 4, mt: { xs: 4, sm: 10 } }}
+        sx={{ mb: 4, mt: { xs: 4, sm: 4 } }}
         
       >
         {description}
@@ -51,9 +53,7 @@ export default function ProductHero({ image, title, description, isVideo }) {
       >
         체험하기
       </Button>
-      <Typography variant="body2" color="inherit" sx={{ mt: 2 }}>
-        Discover the experience
-      </Typography>
+      </Box>
     </ProductHeroLayout>
   );
 }
