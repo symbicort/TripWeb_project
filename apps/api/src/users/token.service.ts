@@ -12,7 +12,6 @@ export class TokenService {
     private readonly redis: RedisClient,
   ) {}
 
-  // 토큰 서비스 .
   async getUserIdFromToken(token: string): Promise<string> {
     const loginKey = this.jwtService.verify(token).loginkey;
     const userId = await this.redis.get(loginKey);
