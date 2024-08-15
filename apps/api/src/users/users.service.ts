@@ -13,7 +13,6 @@ import {
   authUserDto,
 } from './dto/user.dto';
 import { JwtService } from '@nestjs/jwt';
-import { randomKey } from 'src/utils/makeKey';
 import { RedisClient } from './redis.provider';
 import { TokenService } from './token.service';
 import { AwsService } from 'src/aws/aws.service';
@@ -108,7 +107,7 @@ export class UsersService {
         return { result: false, msg: '비밀번호가 일치하지 않습니다' };
       }
 
-      const connectKey = randomKey();
+      let connectKey;
 
       const payload: jwtPayloadDto = { loginkey: connectKey };
 
