@@ -1,6 +1,7 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios"; 
 
+
 export const signupApi = createAsyncThunk('store/signupSlice/signupApi', async (formData, {rejectWithValue}) => {
     try{
         const response = await axios.post('/api/signup', formData)

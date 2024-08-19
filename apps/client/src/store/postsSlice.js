@@ -68,6 +68,7 @@ const postsSlice = configureStore({
     reducer :{},
     extraReducers : (builder)=>{
         builder
+        // 글생성
         .addCase(createPostsApi.pending, (state)=>{
             state.loading = 'loading';
         })
@@ -80,6 +81,7 @@ const postsSlice = configureStore({
             state.loading = 'failed';
             state.error = action.payload;
         })
+        // 글 불러오기
         .addCase(readPostsApi.pending, (state) => {
             state.loading = 'loading';
         })
@@ -92,7 +94,35 @@ const postsSlice = configureStore({
             state.loading = 'failed';
             state.error = action.payload || action.error.message;
         })
-        
+        // 글 업데이트
+        .addCase(updatePostsApi.pending, (state) => {
+            state.loading = 'loading';
+        })
+        .addCase(updatePostsApi.fulfilled, (state, action)=>{
+            state.loading ='success';
+            const postIndex = state.data.findIndex(post => post.id === action.payload.id);
+            if(postIndex !== -1){
+                state.data[postIndex] = action.payload;
+            }
+            state.error = null;
+        })
+        .addCase(updatePostsApi.rejected, (state, action)=>{
+            state.loading = 'failed';
+            state.error = action.payload;
+        })
+        // 글 삭제
+        .addCase(deletePostsApi.pending, (state) => {
+            state.loading = 'loading';
+        })
+        .addCase(deletePostsApi.fulfilled, (state, action)=>{
+            state.loading ='success';
+            state.data = state.data.filter(post => post.id!== action.payload);
+            state.error = null;
+        })
+        .addCase(deletePostsApi.rejected, (state, action)=>{
+            state.loading = 'failed';
+            state.error = action.payload;
+        })
     }
     
 
