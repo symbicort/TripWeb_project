@@ -2,7 +2,7 @@ export class BoardDto {
   post_id: number;
   title: string;
   content: string;
-  updated_at: Date;
+  created_at: Date;
   post_img: string;
   author: string;
   like: number;

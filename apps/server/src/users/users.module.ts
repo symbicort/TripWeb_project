@@ -22,5 +22,3 @@ import { BoardsEntity } from 'src/boards/entities/board-entity';
   controllers: [UsersController],
 })
 export class UserModule {}
-
-console.log('secret key check', process.env.JWT_SECRET_KEY);
