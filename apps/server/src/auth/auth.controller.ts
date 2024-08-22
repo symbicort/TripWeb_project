@@ -1,6 +1,7 @@
-import { Controller, Get, Header, Req, Res } from '@nestjs/common';
+import { Controller, Get, Header, Req, Res, UseGuards } from '@nestjs/common';
 import { Response, Request } from 'express';
 import { AuthService } from './auth.service';
+import { KakaoAuthGuard } from './auth.guard';
 
 @Controller('auth')
 export class AuthController {
@@ -14,8 +15,12 @@ export class AuthController {
   }
 
   @Get('kakao')
-  async getKakaoInfo(@Req() req: Request) {
-    const code = String(req.query.code);
-    await this.authService.kakaoLogin(code);
+  @UseGuards(KakaoAuthGuard) // KakaoAuthGuard를 사용하여 인증 처리
+  async getKakaoInfo(@Req() req: Request, @Res() res: Response) {
+    const user = req.user;
+    
+    console.log('유저 정보 나오나?', user)
+
+    res.json(user);
   }
 }

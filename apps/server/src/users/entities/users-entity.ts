@@ -7,6 +7,7 @@ import {
   Entity,
   OneToMany,
   PrimaryColumn,
+  PrimaryGeneratedColumn,
   Unique,
 } from 'typeorm';
 
@@ -14,20 +15,17 @@ import {
 @Unique(['user_id'])
 @Unique(['nickname'])
 export class UsersEntity extends BaseEntity {
-  @PrimaryColumn({ type: 'nvarchar', length: 30 })
-  user_id: string;
+  @PrimaryGeneratedColumn('increment')
+  id: number;
 
-  @Column({ type: 'nvarchar', length: 30 })
-  email: string;
+  @Column({type: 'nvarchar', length: 10})
+  kakaoID: number;
 
   @Column({ type: 'nvarchar', length: 20 })
   nickname: string;
 
-  @Column({ type: 'nvarchar', length: 100 })
-  password: string;
-
-  // @Column({ type: 'nvarchar' })
-  // gender: string;
+  @Column({default: true})
+  isDefault: boolean;
 
   @CreateDateColumn({ type: 'timestamp' })
   created_at: Date;
@@ -35,18 +33,9 @@ export class UsersEntity extends BaseEntity {
   @DeleteDateColumn({ type: 'timestamp' })
   deleted_at: Date | null;
 
-  @Column({ type: 'nvarchar', length: 100, nullable: true })
+  @Column({ type: 'nvarchar' })
   profile_img: string;
 
   @OneToMany(() => BoardsEntity, (board) => board.author)
   boards: BoardsEntity[];
-
-  @Column({ nullable: true })
-  like_postId: number;
-
-  @Column({ nullable: true })
-  follow: number;
-
-  @Column({ nullable: true })
-  comment_postId: number;
 }

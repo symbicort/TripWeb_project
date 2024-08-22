@@ -38,25 +38,6 @@ export class UsersController {
     }
   }
 
-  @Get('/checkDupId')
-  async checkDupId(@Req() req: Request): Promise<boolean> {
-    try {
-      console.log('controller start', req.query);
-      const inputId: string = req.query.userId as string;
-      console.log('INPUT ID CHK', inputId);
-
-      if (!inputId) {
-        return false;
-      }
-
-      const result = await this.userService.checkDupId(inputId);
-
-      return result;
-    } catch (err) {
-      throw err;
-    }
-  }
-
   @Get('/checkDupNick')
   async checkDupNick(@Req() req: Request): Promise<boolean> {
     try {
@@ -74,32 +55,6 @@ export class UsersController {
     }
   }
 
-  // login
-  @Post('/login')
-  async login(
-    @Body() data: loginDto,
-    @Res({ passthrough: true }) res: Response,
-  ): Promise<void> {
-    try {
-      const result = await this.userService.login(data);
-
-      console.log(result);
-
-      const token = result.token;
-
-      // res.setHeader('Authorization', 'Bearer' + token);
-
-      res.cookie('userKey', token, {
-        httpOnly: true,
-        sameSite: 'lax',
-        maxAge: 7 * 24 * 60 * 60 * 1000,
-      });
-
-      res.send({ result: result.result, msg: result.msg });
-    } catch (err) {
-      throw err;
-    }
-  }
   @Get('/logout')
   async logOut(@Req() req: Request, @Res() res: Response): Promise<void> {
     try {
@@ -155,7 +110,6 @@ export class UsersController {
 
       if (logintoken) {
         const result: userInfoDto =
-
           await this.userService.getUserInfo(logintoken);
 
         res.send({

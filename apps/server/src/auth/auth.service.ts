@@ -1,30 +1,38 @@
 import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
 import axios from 'axios';
+import { profile } from 'console';
+import { UsersEntity } from 'src/users/entities/users-entity';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class AuthService {
-  async kakaoLogin(code: string) {
-    const REST_API_KEY = String(process.env.KAKAO_REST_API_KEY);
-    const REDIRECT_URI = String(process.env.KAKAO_REDIRECT_URI);
-    const AUTHORIZE_CODE = code;
+    constructor(@InjectRepository(UsersEntity) private usersDB: Repository<UsersEntity>,) {}
+    
 
-    const url = 'https://kauth.kakao.com/oauth/token';
-
-    const params = new URLSearchParams();
-    params.append('grant_type', 'authorization_code');
-    params.append('client_id', REST_API_KEY);
-    params.append('redirect_uri', REDIRECT_URI);
-    params.append('code', AUTHORIZE_CODE);
-
+  async kakaoLogin(kakaoID: number, nickname: string, profile_img:string): Promise<any> {
     try {
-      const response = await axios.post(url, params.toString(), {
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
-        },
-      });
+      console.log('유저 정보', kakaoID, nickname, profile_img);
 
-      console.log('Access Token:', response.data);
-      return response.data;
+      const existUser = await this.usersDB.count({
+        where: {kakaoID: kakaoID}
+      })
+
+      if(existUser === 0){
+        const userData = {
+            kakaoID,
+            nickname,
+            profile_img,
+        }
+
+        const result = await this.usersDB.insert(userData)
+
+        console.log(result)
+        // return result
+      }
+
+      
+
     } catch (error) {
       console.error(
         'Error fetching token:',

@@ -28,49 +28,6 @@ export class UsersService {
     private readonly awsService: AwsService,
   ) {}
 
-  async signUp(registerInfo: userDto): Promise<any> {
-    const { user_id, email, nickname, created_at, profile_img } = registerInfo;
-
-    const password = hashPW(registerInfo.password);
-
-    // try-catch
-    try {
-      await this.usersDB.insert({
-        user_id,
-        email,
-        nickname,
-        password,
-        created_at,
-        profile_img,
-      });
-
-      return { result: true, nickname: nickname };
-    } catch (err) {
-      console.error(err);
-      if (err instanceof QueryFailedError) {
-        const dupcol = err.message.split("'");
-        return { result: false, dupcol: dupcol[1] };
-      }
-      throw err;
-    }
-  }
-
-  async checkDupId(inputId: string): Promise<boolean> {
-    try {
-      const result = await this.usersDB.count({ where: { user_id: inputId } });
-
-      console.log('유저 아이디 검증', result, inputId);
-
-      // DB 내에 있으면 false, 없으면 true
-      if (result > 0) {
-        return false;
-      } else {
-        return true;
-      }
-    } catch (err) {
-      throw err;
-    }
-  }
 
   async checkDupNickname(inputNickname: string): Promise<boolean> {
     try {
@@ -84,38 +41,6 @@ export class UsersService {
       } else {
         return true;
       }
-    } catch (err) {
-      throw err;
-    }
-  }
-
-  async login(data: loginDto): Promise<ResultDto> {
-    try {
-      const { userId, pw } = data;
-
-      const idValid = await this.usersDB.findOne({
-        where: { user_id: userId },
-      });
-
-      if (!idValid) {
-        return { result: false, msg: '가입된 아이디가 존재하지 않습니다.' };
-      }
-
-      const validPW: boolean = comparePW(pw, idValid.password);
-
-      if (!validPW) {
-        return { result: false, msg: '비밀번호가 일치하지 않습니다' };
-      }
-
-      let connectKey;
-
-      const payload: jwtPayloadDto = { loginkey: connectKey };
-
-      const loginToken = this.jwtService.sign(payload);
-
-      await this.redis.set(connectKey, idValid.user_id, 'EX', 604800);
-
-      return { result: true, msg: '로그인 성공', token: loginToken };
     } catch (err) {
       throw err;
     }
