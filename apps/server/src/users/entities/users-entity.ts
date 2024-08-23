@@ -38,4 +38,7 @@ export class UsersEntity extends BaseEntity {
 
   @OneToMany(() => BoardsEntity, (board) => board.author)
   boards: BoardsEntity[];
+
+  @Column()
+  refreshToken: string;
 }

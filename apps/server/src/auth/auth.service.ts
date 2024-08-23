@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
 import axios from 'axios';
 import { profile } from 'console';
@@ -7,7 +8,7 @@ import { Repository } from 'typeorm';
 
 @Injectable()
 export class AuthService {
-    constructor(@InjectRepository(UsersEntity) private usersDB: Repository<UsersEntity>,) {}
+    constructor(@InjectRepository(UsersEntity) private usersDB: Repository<UsersEntity>,private readonly jwtService: JwtService) {}
     
 
   async kakaoLogin(kakaoID: number, nickname: string, profile_img:string): Promise<any> {
@@ -32,6 +33,8 @@ export class AuthService {
       }
 
       
+
+
 
     } catch (error) {
       console.error(

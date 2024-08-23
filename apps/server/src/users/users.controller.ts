@@ -24,20 +24,6 @@ export class UsersController {
     private readonly awsService: AwsService,
   ) {}
 
-  @Post('/register')
-  async userRegister(
-    @Body(ValidationPipe) data: userDto,
-    @Res() res: Response,
-  ): Promise<void> {
-    try {
-      const result = await this.userService.signUp(data);
-
-      res.status(201).send(result);
-    } catch (err) {
-      res.status(500).send(`during register error: ${err}`);
-    }
-  }
-
   @Get('/checkDupNick')
   async checkDupNick(@Req() req: Request): Promise<boolean> {
     try {
