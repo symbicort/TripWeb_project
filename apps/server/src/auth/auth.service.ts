@@ -8,7 +8,7 @@ import { Repository } from 'typeorm';
 @Injectable()
 export class AuthService {
   constructor(
-    @InjectRepository(UsersEntity) private usersDB: Repository<UsersEntity>,
+    @InjectRepository(UsersEntity) private userRepository: Repository<UsersEntity>,
     private readonly jwtService: JwtService,
   ) {}
 
@@ -20,18 +20,18 @@ export class AuthService {
     try {
       console.log('유저 정보', kakaoID, nickname, profile_img);
 
-      const existUser = await this.usersDB.count({
+      const user = await this.userRepository.findOne({
         where: { kakaoID: kakaoID },
       });
 
-      if (existUser === 0) {
+      if (!user) {
         const userData = {
           kakaoID,
           nickname,
           profile_img,
         };
 
-        const result = await this.usersDB.insert(userData);
+        this.userRepository.insert(userData);
       }
 
       const payload = 
