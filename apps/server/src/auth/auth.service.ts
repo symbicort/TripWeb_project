@@ -2,13 +2,15 @@ import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
 import axios from 'axios';
+import { LoginDto } from 'src/users/dto/user.dto';
 import { UsersEntity } from 'src/users/entities/users-entity';
 import { Repository } from 'typeorm';
 
 @Injectable()
 export class AuthService {
   constructor(
-    @InjectRepository(UsersEntity) private userRepository: Repository<UsersEntity>,
+    @InjectRepository(UsersEntity)
+    private userRepository: Repository<UsersEntity>,
     private readonly jwtService: JwtService,
   ) {}
 
@@ -16,7 +18,7 @@ export class AuthService {
     kakaoID: number,
     nickname: string,
     profile_img: string,
-  ): Promise<any> {
+  ): Promise<LoginDto> {
     try {
       console.log('유저 정보', kakaoID, nickname, profile_img);
 
@@ -34,10 +36,23 @@ export class AuthService {
         this.userRepository.insert(userData);
       }
 
-      const payload = 
+      const payload = { nickname };
 
-      const accessToken = this.jwtService.sign()
+      const accessToken = this.jwtService.sign(payload, {
+        expiresIn: '2h',
+        algorithm: 'RS256',
+      });
 
+      const refreshToken = this.jwtService.sign(
+        {},
+        {
+          algorithm: 'RS256',
+        },
+      );
+
+      this.userRepository.save({ refreshToken });
+
+      return;
     } catch (error) {
       console.error(
         'Error fetching token:',

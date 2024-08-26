@@ -13,41 +13,8 @@ export class userDto {
   profile_img?: string;
 }
 
-export class loginDto {
-  userId: string;
-  pw: string;
-}
-
-export class ResultDto {
-  result: boolean;
-  msg: string;
-  token?: string;
-}
-
-export class authUserDto {
-  result: boolean;
-  nickname?: string;
-}
-
-export class loginKeyDto {
-  connectKey: string;
-  userInfo: string;
-}
-export interface jwtPayloadDto {
-  [key: string]: string;
-}
-
-export interface userInfoDto {
-  user_id: string;
-  email: string;
+export class LoginDto {
+  accessToken: string;
+  refreshToken: string;
   nickname: string;
-  profile_img?: string;
-}
-
-export interface editUserInfo {
-  userId: string;
-  email: string;
-  nickname: string;
-  original_password: string;
-  new_password?: string;
 }
