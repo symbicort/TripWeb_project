@@ -13,7 +13,7 @@ export class userDto {
   profile_img?: string;
 }
 
-export class LoginDto {
+export class loginDto {
   accessToken: string;
   refreshToken: string;
   nickname: string;

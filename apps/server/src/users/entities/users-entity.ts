@@ -12,19 +12,18 @@ import {
 } from 'typeorm';
 
 @Entity('Users')
-@Unique(['user_id'])
 @Unique(['nickname'])
 export class UsersEntity extends BaseEntity {
   @PrimaryGeneratedColumn('increment')
   id: number;
 
-  @Column({type: 'nvarchar', length: 10})
+  @Column({ type: 'nvarchar', length: 10 })
   kakaoID: number;
 
   @Column({ type: 'nvarchar', length: 20 })
   nickname: string;
 
-  @Column({default: true})
+  @Column({ default: true })
   isDefault: boolean;
 
   @CreateDateColumn({ type: 'timestamp' })
@@ -39,6 +38,6 @@ export class UsersEntity extends BaseEntity {
   @OneToMany(() => BoardsEntity, (board) => board.author)
   boards: BoardsEntity[];
 
-  @Column()
+  @Column({ nullable: true })
   refreshToken: string;
 }

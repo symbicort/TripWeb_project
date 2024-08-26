@@ -12,7 +12,7 @@ import {
   ValidationPipe,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
-import { userDto, loginDto, editUserInfo, userInfoDto } from './dto/user.dto';
+import { userDto, loginDto } from './dto/user.dto';
 import { Response, Request } from 'express';
 import { AwsService } from 'src/aws/aws.service';
 import { FileInterceptor } from '@nestjs/platform-express';
@@ -24,162 +24,162 @@ export class UsersController {
     private readonly awsService: AwsService,
   ) {}
 
-  @Get('/checkDupNick')
-  async checkDupNick(@Req() req: Request): Promise<boolean> {
-    try {
-      const inputNickname: string = req.query.nickname as string;
+  // @Get('/checkDupNick')
+  // async checkDupNick(@Req() req: Request): Promise<boolean> {
+  //   try {
+  //     const inputNickname: string = req.query.nickname as string;
 
-      if (!inputNickname) {
-        return false;
-      }
+  //     if (!inputNickname) {
+  //       return false;
+  //     }
 
-      const result = await this.userService.checkDupNickname(inputNickname);
+  //     const result = await this.userService.checkDupNickname(inputNickname);
 
-      return result;
-    } catch (err) {
-      throw err;
-    }
-  }
+  //     return result;
+  //   } catch (err) {
+  //     throw err;
+  //   }
+  // }
 
-  @Get('/logout')
-  async logOut(@Req() req: Request, @Res() res: Response): Promise<void> {
-    try {
-      const logintoken = await req.cookies.userKey;
+  // @Get('/logout')
+  // async logOut(@Req() req: Request, @Res() res: Response): Promise<void> {
+  //   try {
+  //     const logintoken = await req.cookies.userKey;
 
-      console.log(logintoken);
+  //     console.log(logintoken);
 
-      console.log(req.cookies);
+  //     console.log(req.cookies);
 
-      if (!logintoken) {
-        console.log('로그인 토큰 if');
-        res.status(401).send({ result: false, msg: '로그인 상태가 아닙니다' });
-        return;
-      }
+  //     if (!logintoken) {
+  //       console.log('로그인 토큰 if');
+  //       res.status(401).send({ result: false, msg: '로그인 상태가 아닙니다' });
+  //       return;
+  //     }
 
-      const result = await this.userService.logout(logintoken);
+  //     const result = await this.userService.logout(logintoken);
 
-      if (result) {
-        res.clearCookie('userKey');
+  //     if (result) {
+  //       res.clearCookie('userKey');
 
-        res.send({ result: true });
-      } else {
-        res.send({ result: false, msg: 'redis 내 키가 존재하지 않음' });
-      }
-    } catch (err) {
-      throw err;
-    }
-  }
+  //       res.send({ result: true });
+  //     } else {
+  //       res.send({ result: false, msg: 'redis 내 키가 존재하지 않음' });
+  //     }
+  //   } catch (err) {
+  //     throw err;
+  //   }
+  // }
 
-  @Get('/authuser')
-  async authuser(@Req() req: Request, @Res() res: Response): Promise<void> {
-    try {
-      const logintoken = req.cookies.userKey;
+  // @Get('/authuser')
+  // async authuser(@Req() req: Request, @Res() res: Response): Promise<void> {
+  //   try {
+  //     const logintoken = req.cookies.userKey;
 
-      if (!logintoken) {
-        res.send({ result: false, msg: '로그인 상태가 아닙니다' });
-        return;
-      }
+  //     if (!logintoken) {
+  //       res.send({ result: false, msg: '로그인 상태가 아닙니다' });
+  //       return;
+  //     }
 
-      const result = await this.userService.authUser(logintoken);
+  //     const result = await this.userService.authUser(logintoken);
 
-      res.send({ result: true, msg: result });
-    } catch (err) {
-      throw err;
-    }
-  }
+  //     res.send({ result: true, msg: result });
+  //   } catch (err) {
+  //     throw err;
+  //   }
+  // }
 
-  // 유저 정보 확인
-  @Post('/info')
-  async getUserInfo(@Req() req: Request, @Res() res: Response): Promise<void> {
-    try {
-      const logintoken = req.cookies.userKey;
+  // // 유저 정보 확인
+  // @Post('/info')
+  // async getUserInfo(@Req() req: Request, @Res() res: Response): Promise<void> {
+  //   try {
+  //     const logintoken = req.cookies.userKey;
 
-      if (logintoken) {
-        const result: userInfoDto =
-          await this.userService.getUserInfo(logintoken);
+  //     if (logintoken) {
+  //       const result: userInfoDto =
+  //         await this.userService.getUserInfo(logintoken);
 
-        res.send({
-          result: true,
-          userId: result.user_id,
-          email: result.email,
-          nickname: result.nickname,
-          profile_img: result.profile_img,
-        });
-      } else {
-        res.send({ result: false, msg: '로그인 상태가 아닙니다' });
-      }
-    } catch (err) {
-      throw err;
-    }
-  }
+  //       res.send({
+  //         result: true,
+  //         userId: result.user_id,
+  //         email: result.email,
+  //         nickname: result.nickname,
+  //         profile_img: result.profile_img,
+  //       });
+  //     } else {
+  //       res.send({ result: false, msg: '로그인 상태가 아닙니다' });
+  //     }
+  //   } catch (err) {
+  //     throw err;
+  //   }
+  // }
 
-  @Patch('/info')
-  async editUserInfo(
-    @Body() data: editUserInfo,
-    @Req() req: Request,
-    @Res() res: Response,
-  ): Promise<void> {
-    try {
-      const logintoken = req.cookies.userKey;
+  // @Patch('/info')
+  // async editUserInfo(
+  //   @Body() data: editUserInfo,
+  //   @Req() req: Request,
+  //   @Res() res: Response,
+  // ): Promise<void> {
+  //   try {
+  //     const logintoken = req.cookies.userKey;
 
-      if (logintoken) {
-        const result = await this.userService.updateUserInfo(logintoken, data);
+  //     if (logintoken) {
+  //       const result = await this.userService.updateUserInfo(logintoken, data);
 
-        res.clearCookie('userKey');
+  //       res.clearCookie('userKey');
 
-        res.send(result);
-      } else {
-        res.send({ result: false, msg: '로그인 상태가 아닙니다' });
-      }
-    } catch (err) {
-      throw err;
-    }
-  }
+  //       res.send(result);
+  //     } else {
+  //       res.send({ result: false, msg: '로그인 상태가 아닙니다' });
+  //     }
+  //   } catch (err) {
+  //     throw err;
+  //   }
+  // }
 
-  @Delete('/withDraw')
-  async withDraw(@Req() req: Request, @Res() res: Response): Promise<void> {
-    try {
-      const logintoken = req.cookies.userKey;
+  // @Delete('/withDraw')
+  // async withDraw(@Req() req: Request, @Res() res: Response): Promise<void> {
+  //   try {
+  //     const logintoken = req.cookies.userKey;
 
-      if (logintoken) {
-        const result = await this.userService.withDraw(logintoken);
+  //     if (logintoken) {
+  //       const result = await this.userService.withDraw(logintoken);
 
-        if (result) {
-          res.clearCookie('userKey');
+  //       if (result) {
+  //         res.clearCookie('userKey');
 
-          res.send({ result: true });
-        } else {
-          res.send({ result: false, msg: 'redis 내 키가 존재하지 않음' });
-        }
-      } else {
-        res.send({ result: false, msg: '로그인 상태가 아닙니다' });
-      }
-    } catch (err) {
-      throw err;
-    }
-  }
+  //         res.send({ result: true });
+  //       } else {
+  //         res.send({ result: false, msg: 'redis 내 키가 존재하지 않음' });
+  //       }
+  //     } else {
+  //       res.send({ result: false, msg: '로그인 상태가 아닙니다' });
+  //     }
+  //   } catch (err) {
+  //     throw err;
+  //   }
+  // }
 
-  @Post('upload')
-  @UseInterceptors(FileInterceptor('image'))
-  async uploadImage(
-    @UploadedFile() file: Express.Multer.File,
-    @Req() req: Request,
-    @Res() res: Response,
-  ): Promise<void> {
-    try {
-      const logintoken = req.cookies.userKey;
+  // @Post('upload')
+  // @UseInterceptors(FileInterceptor('image'))
+  // async uploadImage(
+  //   @UploadedFile() file: Express.Multer.File,
+  //   @Req() req: Request,
+  //   @Res() res: Response,
+  // ): Promise<void> {
+  //   try {
+  //     const logintoken = req.cookies.userKey;
 
-      if (!logintoken) {
-        res.send({ result: false, msg: '로그인 상태가 아닙니다' });
-        return;
-      }
-      const imageUrl = await this.awsService.imageUploadToS3(file);
+  //     if (!logintoken) {
+  //       res.send({ result: false, msg: '로그인 상태가 아닙니다' });
+  //       return;
+  //     }
+  //     const imageUrl = await this.awsService.imageUploadToS3(file);
 
-      await this.userService.uploadImg(logintoken, imageUrl);
+  //     await this.userService.uploadImg(logintoken, imageUrl);
 
-      res.send({ result: true });
-    } catch (error) {
-      throw error;
-    }
-  }
+  //     res.send({ result: true });
+  //   } catch (error) {
+  //     throw error;
+  //   }
+  // }
 }

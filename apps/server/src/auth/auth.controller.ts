@@ -15,12 +15,16 @@ export class AuthController {
   }
 
   @Get('kakao')
-  @UseGuards(KakaoAuthGuard) // KakaoAuthGuard를 사용하여 인증 처리
+  @UseGuards(KakaoAuthGuard)
   async getKakaoInfo(@Req() req: Request, @Res() res: Response) {
-    const user = req.user;
-    
-    console.log('유저 정보 나오나?', user)
+    try {
+      const user = req.user;
 
-    res.json(user);
+      console.log('유저 정보 나오나?', user);
+
+      res.json(user);
+    } catch (error) {
+      throw new Error('Login failed');
+    }
   }
 }
