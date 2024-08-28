@@ -60,8 +60,6 @@ export class AuthService {
 
       await this.userRepository.update({ kakaoID }, { refreshToken });
 
-      console.log('리턴 데이터', accessToken, refreshToken, nickname);
-
       return { accessToken, refreshToken, nickname };
     } catch (error) {
       console.error(error.response ? error.response.data : error.message);
