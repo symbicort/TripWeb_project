@@ -4,9 +4,6 @@ import { UsersController } from './users.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UsersEntity } from './entities/users-entity';
 import { JwtModule } from '@nestjs/jwt';
-// import { RedisModule } from '@liaoliaots/nestjs-redis';
-import { redisProvider } from './redis.provider';
-import { TokenService } from './token.service';
 import { AwsModule } from 'src/aws/aws.module';
 import { BoardsEntity } from 'src/boards/entities/board-entity';
 
@@ -18,7 +15,7 @@ import { BoardsEntity } from 'src/boards/entities/board-entity';
     TypeOrmModule.forFeature([UsersEntity, BoardsEntity]),
     AwsModule,
   ],
-  providers: [UsersService, redisProvider, TokenService],
+  providers: [UsersService],
   controllers: [UsersController],
 })
 export class UserModule {}

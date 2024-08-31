@@ -2,6 +2,7 @@ import { Controller, Get, Header, Req, Res, UseGuards } from '@nestjs/common';
 import { Response, Request } from 'express';
 import { AuthService } from './auth.service';
 import { KakaoAuthGuard } from './auth.guard';
+import { loginDto } from 'src/users/dto/user.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -18,13 +19,24 @@ export class AuthController {
   @UseGuards(KakaoAuthGuard)
   async getKakaoInfo(@Req() req: Request, @Res() res: Response) {
     try {
-      const user = req.user;
+      const user = req.user as loginDto;
 
-      console.log('유저 정보 나오나?', user);
+      console.log('유저 정보 나오나?', user.returnNickname);
 
-      res.json(user);
+      res.cookie('userinfo', user.refreshToken, {
+        httpOnly: true,
+        sameSite: 'lax',
+        maxAge: 1000 * 60 * 120,
+      });
+      res.status(200).json(user);
     } catch (error) {
       throw new Error('Login failed');
     }
+  }
+
+  @Get('logout')
+  async logout(@Res() res: Response) {
+    res.clearCookie('userinfo');
+    res.status(200).send();
   }
 }

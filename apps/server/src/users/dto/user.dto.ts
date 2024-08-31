@@ -16,5 +16,5 @@ export class userDto {
 export class loginDto {
   accessToken: string;
   refreshToken: string;
-  nickname: string;
+  returnNickname: string;
 }

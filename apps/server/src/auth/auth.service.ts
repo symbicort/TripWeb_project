@@ -43,7 +43,6 @@ export class AuthService {
 
       const payload = { nickname };
 
-      // `sign` 메소드에 시크릿 키를 명시적으로 전달
       const accessToken = this.jwtService.sign(payload, {
         secret: this.jwtSecret,
         expiresIn: '2h',
@@ -58,9 +57,11 @@ export class AuthService {
         },
       );
 
+      const returnNickname = user.nickname;
+
       await this.userRepository.update({ kakaoID }, { refreshToken });
 
-      return { accessToken, refreshToken, nickname };
+      return { accessToken, refreshToken, returnNickname };
     } catch (error) {
       console.error(error.response ? error.response.data : error.message);
       throw new Error('Login failed');

@@ -5,17 +5,13 @@ import { UsersEntity } from './entities/users-entity';
 import { hashPW, comparePW } from 'src/utils/crypto';
 import { JwtService } from '@nestjs/jwt';
 import { RedisClient } from './redis.provider';
-import { TokenService } from './token.service';
 import { AwsService } from 'src/aws/aws.service';
 
 @Injectable()
 export class UsersService {
   constructor(
-    @Inject('REDIS_CLIENT')
-    private readonly redis: RedisClient,
     @InjectRepository(UsersEntity) private usersDB: Repository<UsersEntity>,
     private readonly jwtService: JwtService,
-    private readonly tokenService: TokenService,
     private readonly awsService: AwsService,
   ) {}
 
