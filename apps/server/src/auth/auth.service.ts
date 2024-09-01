@@ -1,5 +1,4 @@
-import { Injectable } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
 import { loginDto } from 'src/users/dto/user.dto';
@@ -8,16 +7,11 @@ import { Repository } from 'typeorm';
 
 @Injectable()
 export class AuthService {
-  private readonly jwtSecret: string;
-
   constructor(
     @InjectRepository(UsersEntity)
     private userRepository: Repository<UsersEntity>,
     private readonly jwtService: JwtService,
-    private readonly configService: ConfigService, // ConfigService 주입
-  ) {
-    this.jwtSecret = this.configService.get<string>('JWT_SECRET_KEY');
-  }
+  ) {}
 
   async kakaoLogin(
     kakaoID: number,
@@ -25,8 +19,6 @@ export class AuthService {
     profile_img: string,
   ): Promise<loginDto> {
     try {
-      console.log('유저 정보', kakaoID, nickname, profile_img);
-
       let user = await this.userRepository.findOne({
         where: { kakaoID: kakaoID },
       });
@@ -44,7 +36,6 @@ export class AuthService {
       const payload = { nickname };
 
       const accessToken = this.jwtService.sign(payload, {
-        secret: this.jwtSecret,
         expiresIn: '2h',
         algorithm: 'HS256',
       });
@@ -52,7 +43,6 @@ export class AuthService {
       const refreshToken = this.jwtService.sign(
         { nickname },
         {
-          secret: this.jwtSecret,
           algorithm: 'HS256',
         },
       );
@@ -66,5 +56,25 @@ export class AuthService {
       console.error(error.response ? error.response.data : error.message);
       throw new Error('Login failed');
     }
+  }
+
+  async generateAccessToken(clientToken: string): Promise<string> {
+    const user = await this.userRepository.findOne({
+      where: { refreshToken: clientToken },
+    });
+
+    if (!user) {
+      throw new NotFoundException('user not found');
+    }
+
+    const accessToken = this.jwtService.sign(
+      { nickname: user.nickname },
+      {
+        expiresIn: '2h',
+        algorithm: 'HS256',
+      },
+    );
+
+    return accessToken;
   }
 }

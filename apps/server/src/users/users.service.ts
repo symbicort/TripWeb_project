@@ -6,6 +6,7 @@ import { hashPW, comparePW } from 'src/utils/crypto';
 import { JwtService } from '@nestjs/jwt';
 import { RedisClient } from './redis.provider';
 import { AwsService } from 'src/aws/aws.service';
+import { userInfoDto } from './dto/user.dto';
 
 @Injectable()
 export class UsersService {
@@ -15,38 +16,22 @@ export class UsersService {
     private readonly awsService: AwsService,
   ) {}
 
-  // async checkDupNickname(inputNickname: string): Promise<boolean> {
-  //   try {
-  //     const result = await this.usersDB.count({
-  //       where: { nickname: inputNickname },
-  //     });
+  async checkDupNickname(inputNickname: string): Promise<boolean> {
+    try {
+      const result = await this.usersDB.count({
+        where: { nickname: inputNickname },
+      });
 
-  //     // DB 내에 있으면 false, 없으면 true
-  //     if (result > 0) {
-  //       return false;
-  //     } else {
-  //       return true;
-  //     }
-  //   } catch (err) {
-  //     throw err;
-  //   }
-  // }
-
-  // async logout(logintoken: string): Promise<boolean> {
-  //   try {
-  //     const loginKey = this.jwtService.verify(logintoken).loginkey;
-
-  //     const logoutRes = await this.redis.del(loginKey);
-
-  //     if (logoutRes) {
-  //       return true;
-  //     } else {
-  //       return false;
-  //     }
-  //   } catch (err) {
-  //     throw err;
-  //   }
-  // }
+      // DB 내에 있으면 false, 없으면 true
+      if (result > 0) {
+        return false;
+      } else {
+        return true;
+      }
+    } catch (err) {
+      throw err;
+    }
+  }
 
   // async authUser(logintoken: string): Promise<authUserDto> {
   //   try {
@@ -70,19 +55,17 @@ export class UsersService {
   //   }
   // }
 
-  // async getUserInfo(logintoken: string): Promise<userInfoDto> {
-  //   try {
-  //     const userId = await this.tokenService.getUserIdFromToken(logintoken);
+  async getUserInfo(nickname: string): Promise<userInfoDto> {
+    try {
+      const userInfo = await this.usersDB.findOne({
+        where: { nickname },
+      });
 
-  //     const idValid = await this.usersDB.findOne({
-  //       where: { user_id: userId },
-  //     });
-
-  //     return idValid;
-  //   } catch (err) {
-  //     throw err;
-  //   }
-  // }
+      return new userInfoDto(userInfo);
+    } catch (err) {
+      throw err;
+    }
+  }
 
   // async updateUserInfo(
   //   loginToken: string,

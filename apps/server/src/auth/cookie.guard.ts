@@ -4,21 +4,24 @@ import {
   ExecutionContext,
   UnauthorizedException,
 } from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
 import { Request } from 'express';
 
 @Injectable()
 export class CookieGuard implements CanActivate {
+  constructor(private readonly jwtService: JwtService) {}
+
   canActivate(context: ExecutionContext): boolean {
     const request: Request = context.switchToHttp().getRequest();
 
-    const cookieName = 'userinfo';
-    const cookieValue = request.cookies[cookieName];
+    const token = request.cookies['userinfo'];
 
-    console.log(cookieValue);
-
-    if (!cookieValue) {
+    if (!token) {
       throw new UnauthorizedException('Not login');
     }
+
+    const nickname = this.jwtService.verify(token);
+    request.user = nickname;
 
     return true;
   }
