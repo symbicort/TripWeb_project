@@ -30,12 +30,15 @@ export class AuthController {
     try {
       const user = req.user as loginDto;
 
-      res.cookie('userinfo', user.refreshToken, {
+      res.cookie('userinfo', user.accessToken, {
         httpOnly: true,
         sameSite: 'lax',
         maxAge: 1000 * 60 * 120,
       });
-      res.status(200).json(user);
+      res.status(200).json({
+        refreshToken: user.refreshToken,
+        nickname: user.returnNickname,
+      });
     } catch (error) {
       throw new Error('Login failed');
     }

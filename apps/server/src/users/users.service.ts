@@ -33,28 +33,6 @@ export class UsersService {
     }
   }
 
-  // async authUser(logintoken: string): Promise<authUserDto> {
-  //   try {
-  //     const userId = await this.tokenService.getUserIdFromToken(logintoken);
-
-  //     if (!userId) {
-  //       return { result: false };
-  //     }
-
-  //     const idValid = await this.usersDB.findOne({
-  //       where: { user_id: userId },
-  //     });
-
-  //     if (!idValid) {
-  //       return { result: false };
-  //     }
-
-  //     return { result: true, nickname: idValid.nickname };
-  //   } catch (err) {
-  //     throw err;
-  //   }
-  // }
-
   async getUserInfo(nickname: string): Promise<userInfoDto> {
     try {
       const userInfo = await this.usersDB.findOne({
@@ -67,63 +45,33 @@ export class UsersService {
     }
   }
 
-  // async updateUserInfo(
-  //   loginToken: string,
-  //   data: editUserInfo,
-  // ): Promise<ResultDto> {
-  //   const { userId, email, nickname, original_password } = data;
+  async updateUserInfo(data: editUserInfo): Promise<ResultDto> {
+    const { userId, email, nickname, original_password } = data;
 
-  //   console.log(data);
+    console.log(data);
 
-  //   try {
-  //     const idValid = await this.usersDB.findOne({
-  //       where: { user_id: userId },
-  //     });
+    try {
+      const nicknameValid = await this.usersDB.findOne({
+        where: { nickname: nickname },
+      });
 
-  //     if (!idValid) {
-  //       return { result: false, msg: '이메일이 존재하지 않습니다.' };
-  //     }
+      if (nicknameValid) {
+        return {
+          result: false,
+          msg: '중복된 닉네임으로 변경이 불가능합니다.',
+        };
+      }
 
-  //     const validPW: boolean = comparePW(original_password, idValid.password);
+      await this.usersDB.update(
+        { user_id: userId },
+        { email: email, nickname: nickname, password: password },
+      );
 
-  //     if (!validPW) {
-  //       return { result: false, msg: '비밀번호가 일치하지 않습니다' };
-  //     }
-
-  //     const nicknameValid = await this.usersDB.findOne({
-  //       where: { nickname: nickname },
-  //     });
-
-  //     if (nicknameValid) {
-  //       return {
-  //         result: false,
-  //         msg: '중복된 닉네임으로 변경이 불가능합니다.',
-  //       };
-  //     }
-
-  //     if (data.new_password) {
-  //       const password = hashPW(data.new_password);
-
-  //       await this.usersDB.update(
-  //         { user_id: userId },
-  //         { email: email, nickname: nickname, password: password },
-  //       );
-  //     } else {
-  //       await this.usersDB.update(
-  //         { user_id: userId },
-  //         { email: email, nickname: nickname, password: idValid.password },
-  //       );
-  //     }
-
-  //     const loginKey = this.jwtService.verify(loginToken).loginkey;
-
-  //     await this.redis.del(loginKey);
-
-  //     return { result: true, msg: '정보가 성공적으로 변경되었습니다.' };
-  //   } catch (err) {
-  //     throw err;
-  //   }
-  // }
+      return { result: true, msg: '정보가 성공적으로 변경되었습니다.' };
+    } catch (err) {
+      throw err;
+    }
+  }
 
   // async withDraw(logintoken: string): Promise<ResultDto> {
   //   try {

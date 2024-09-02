@@ -69,30 +69,28 @@ export class UsersController {
     }
   }
 
-  // @Patch('/info')
-  // async editUserInfo(
-  //   @Body() data: editUserInfo,
-  //   @Req() req: Request,
-  //   @Res() res: Response,
-  // ): Promise<void> {
-  //   try {
-  //     const logintoken = req.cookies.userKey;
+  @Patch('/info')
+  @UseGuards(CookieGuard)
+  async editUserInfo(
+    @Body() nickname,
+    @Req() req: Request,
+    @Res() res: Response,
+  ): Promise<void> {
+    try {
+      const { nickname } = req.user as cookieInfoDto;
 
-  //     if (logintoken) {
-  //       const result = await this.userService.updateUserInfo(logintoken, data);
+      const result = await this.userService.updateUserInfo(nickname);
 
-  //       res.clearCookie('userKey');
+      res.clearCookie('userinfo');
 
-  //       res.send(result);
-  //     } else {
-  //       res.send({ result: false, msg: '로그인 상태가 아닙니다' });
-  //     }
-  //   } catch (err) {
-  //     throw err;
-  //   }
-  // }
+      res.send(result);
+    } catch (err) {
+      throw err;
+    }
+  }
 
   // @Delete('/withDraw')
+  // @UseGuards(CookieGuard)
   // async withDraw(@Req() req: Request, @Res() res: Response): Promise<void> {
   //   try {
   //     const logintoken = req.cookies.userKey;
