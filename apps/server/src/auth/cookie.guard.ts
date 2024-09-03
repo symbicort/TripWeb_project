@@ -12,21 +12,21 @@ export class CookieGuard implements CanActivate {
   constructor(private readonly jwtService: JwtService) {}
 
   canActivate(context: ExecutionContext): boolean {
+    const request: Request = context.switchToHttp().getRequest();
+
+    const token = request.cookies['userinfo'];
+
+    if (!token) {
+      throw new UnauthorizedException('Not login');
+    }
+
     try {
-      const request: Request = context.switchToHttp().getRequest();
-
-      const token = request.cookies['userinfo'];
-
-      if (!token) {
-        throw new UnauthorizedException('Not login');
-      }
-
       const nickname = this.jwtService.verify(token);
       request.user = nickname;
 
       return true;
-    } catch (error) {
-      throw new Error();
+    } catch (err) {
+      throw new Error(err);
     }
   }
 }

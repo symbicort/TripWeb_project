@@ -10,10 +10,9 @@ import {
   UploadedFile,
   UseGuards,
   UseInterceptors,
-  ValidationPipe,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
-import { userDto, loginDto, cookieInfoDto, userInfoDto } from './dto/user.dto';
+import { cookieInfoDto } from './dto/user.dto';
 import { Response, Request } from 'express';
 import { AwsService } from 'src/aws/aws.service';
 import { FileInterceptor } from '@nestjs/platform-express';
@@ -72,68 +71,58 @@ export class UsersController {
   @Patch('/info')
   @UseGuards(CookieGuard)
   async editUserInfo(
-    @Body() nickname,
+    @Body() body,
+    @Req() req: Request,
+    @Res() res: Response,
+  ): Promise<void> {
+    try {
+      const { nickname } = req.user as cookieInfoDto;
+      const newNickname = body.nickname;
+
+      await this.userService.updateUserInfo(nickname, newNickname);
+
+      res.clearCookie('userinfo');
+
+      res.status(200).send();
+    } catch (err) {
+      throw err;
+    }
+  }
+
+  @Delete('/withDraw')
+  @UseGuards(CookieGuard)
+  async withDraw(@Req() req: Request, @Res() res: Response): Promise<void> {
+    try {
+      const { nickname } = req.user as cookieInfoDto;
+
+      res.clearCookie('userinfo');
+
+      await this.userService.withDraw(nickname);
+
+      res.status(200).send();
+    } catch (err) {
+      throw err;
+    }
+  }
+
+  @Post('upload')
+  @UseGuards(CookieGuard)
+  @UseInterceptors(FileInterceptor('image'))
+  async uploadImage(
+    @UploadedFile() file: Express.Multer.File,
     @Req() req: Request,
     @Res() res: Response,
   ): Promise<void> {
     try {
       const { nickname } = req.user as cookieInfoDto;
 
-      const result = await this.userService.updateUserInfo(nickname);
+      const imageUrl = await this.awsService.imageUploadToS3(file);
 
-      res.clearCookie('userinfo');
+      await this.userService.uploadImg(nickname, imageUrl);
 
-      res.send(result);
-    } catch (err) {
-      throw err;
+      res.send({ result: true });
+    } catch (error) {
+      throw error;
     }
   }
-
-  // @Delete('/withDraw')
-  // @UseGuards(CookieGuard)
-  // async withDraw(@Req() req: Request, @Res() res: Response): Promise<void> {
-  //   try {
-  //     const logintoken = req.cookies.userKey;
-
-  //     if (logintoken) {
-  //       const result = await this.userService.withDraw(logintoken);
-
-  //       if (result) {
-  //         res.clearCookie('userKey');
-
-  //         res.send({ result: true });
-  //       } else {
-  //         res.send({ result: false, msg: 'redis 내 키가 존재하지 않음' });
-  //       }
-  //     } else {
-  //       res.send({ result: false, msg: '로그인 상태가 아닙니다' });
-  //     }
-  //   } catch (err) {
-  //     throw err;
-  //   }
-  // }
-
-  // @Post('upload')
-  // @UseInterceptors(FileInterceptor('image'))
-  // async uploadImage(
-  //   @UploadedFile() file: Express.Multer.File,
-  //   @Req() req: Request,
-  //   @Res() res: Response,
-  // ): Promise<void> {
-  //   try {
-  //     const logintoken = req.cookies.userKey;
-
-  //     if (!logintoken) {
-  //       res.send({ result: false, msg: '로그인 상태가 아닙니다' });
-  //       return;
-  //     }
-  //     const imageUrl = await this.awsService.imageUploadToS3(file);
-
-  //     await this.userService.uploadImg(logintoken, imageUrl);
-
-  //     res.send({ result: true });
-  //   } catch (error) {
-  //     throw error;
-  //   }
-  // }
 }

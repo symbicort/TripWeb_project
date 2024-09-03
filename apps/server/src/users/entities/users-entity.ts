@@ -6,13 +6,10 @@ import {
   DeleteDateColumn,
   Entity,
   OneToMany,
-  PrimaryColumn,
   PrimaryGeneratedColumn,
-  Unique,
 } from 'typeorm';
 
 @Entity('Users')
-@Unique(['nickname'])
 export class UsersEntity extends BaseEntity {
   @PrimaryGeneratedColumn('increment')
   id: number;
@@ -23,7 +20,7 @@ export class UsersEntity extends BaseEntity {
   @Column({ type: 'nvarchar', length: 20 })
   nickname: string;
 
-  @Column({ default: true })
+  @Column({ default: true, type: 'boolean' })
   isDefault: boolean;
 
   @CreateDateColumn({ type: 'timestamp' })

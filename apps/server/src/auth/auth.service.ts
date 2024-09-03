@@ -33,15 +33,16 @@ export class AuthService {
         await this.userRepository.save(user);
       }
 
-      const payload = { nickname };
-
-      const accessToken = this.jwtService.sign(payload, {
-        expiresIn: '2h',
-        algorithm: 'HS256',
-      });
+      const accessToken = this.jwtService.sign(
+        { nickname },
+        {
+          expiresIn: '2h',
+          algorithm: 'HS256',
+        },
+      );
 
       const refreshToken = this.jwtService.sign(
-        { nickname },
+        { kakaoID },
         {
           algorithm: 'HS256',
         },

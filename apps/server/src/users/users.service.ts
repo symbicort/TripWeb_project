@@ -1,10 +1,8 @@
-import { Injectable, Inject } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { QueryFailedError, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import { UsersEntity } from './entities/users-entity';
-import { hashPW, comparePW } from 'src/utils/crypto';
 import { JwtService } from '@nestjs/jwt';
-import { RedisClient } from './redis.provider';
 import { AwsService } from 'src/aws/aws.service';
 import { userInfoDto } from './dto/user.dto';
 
@@ -45,73 +43,48 @@ export class UsersService {
     }
   }
 
-  async updateUserInfo(data: editUserInfo): Promise<ResultDto> {
-    const { userId, email, nickname, original_password } = data;
-
-    console.log(data);
-
+  async updateUserInfo(nickname, newNickname): Promise<any> {
     try {
-      const nicknameValid = await this.usersDB.findOne({
-        where: { nickname: nickname },
-      });
-
-      if (nicknameValid) {
-        return {
-          result: false,
-          msg: '중복된 닉네임으로 변경이 불가능합니다.',
-        };
-      }
-
-      await this.usersDB.update(
-        { user_id: userId },
-        { email: email, nickname: nickname, password: password },
+      const result = await this.usersDB.update(
+        { nickname },
+        { nickname: newNickname, isDefault: false },
       );
 
-      return { result: true, msg: '정보가 성공적으로 변경되었습니다.' };
+      return result;
     } catch (err) {
       throw err;
     }
   }
 
-  // async withDraw(logintoken: string): Promise<ResultDto> {
-  //   try {
-  //     const loginKey = this.jwtService.verify(logintoken).loginkey;
+  async withDraw(nickname: string): Promise<void> {
+    try {
+      const result = await this.usersDB.softDelete({ nickname });
 
-  //     const userId = await this.redis.get(loginKey);
+      console.log(result);
+    } catch (err) {
+      throw err;
+    }
+  }
 
-  //     const result = await this.usersDB.softDelete({ user_id: userId });
+  async uploadImg(nickname: string, imageUrl: string): Promise<void> {
+    try {
+      const user = await this.usersDB.findOne({
+        where: { nickname },
+      });
 
-  //     if (result.affected) {
-  //       await this.redis.del(loginKey);
+      if (!user.profile_img.includes('kakaocdn')) {
+        console.log('기존 이미지 삭제');
+        await this.awsService.deleteImg(user.profile_img);
+      }
 
-  //       return { result: true, msg: '회원탈퇴가 완료되었습니다.' };
-  //     }
-  //   } catch (err) {
-  //     throw err;
-  //   }
-  // }
+      const idValid = await this.usersDB.update(
+        { nickname },
+        { profile_img: imageUrl },
+      );
 
-  // async uploadImg(logintoken: string, imageUrl: string): Promise<void> {
-  //   try {
-  //     const userId = await this.tokenService.getUserIdFromToken(logintoken);
-
-  //     const imgValid = await this.usersDB.findOne({
-  //       where: { user_id: userId },
-  //     });
-
-  //     if (imgValid.profile_img) {
-  //       console.log('이미지 삭제');
-  //       await this.awsService.deleteImg(imgValid.profile_img);
-  //     }
-
-  //     const idValid = await this.usersDB.update(
-  //       { user_id: userId },
-  //       { profile_img: imageUrl },
-  //     );
-
-  //     console.log(idValid);
-  //   } catch (err) {
-  //     throw err;
-  //   }
-  // }
+      console.log(idValid);
+    } catch (err) {
+      throw err;
+    }
+  }
 }
