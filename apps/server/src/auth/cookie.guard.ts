@@ -26,6 +26,7 @@ export class CookieGuard implements CanActivate {
 
       return true;
     } catch (err) {
+      console.error(err);
       throw new Error(err);
     }
   }

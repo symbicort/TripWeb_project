@@ -4,24 +4,30 @@ import { BoardsEntity } from './entities/board-entity';
 import { Repository } from 'typeorm';
 import { AwsService } from 'src/aws/aws.service';
 import { BoardDto, createBoardDto } from './dto/board.dto';
+import { UsersEntity } from 'src/users/entities/users-entity';
 
 @Injectable()
 export class BoardsService {
   constructor(
     @InjectRepository(BoardsEntity) private boardsDB: Repository<BoardsEntity>,
+    @InjectRepository(UsersEntity) private usersDB: Repository<UsersEntity>,
     private readonly awsService: AwsService,
   ) {}
 
   async createBoard(
     board: createBoardDto,
     imgUrl: string,
-    writer: string,
-  ): Promise<boolean> {
+    nickname: string,
+  ): Promise<any> {
     try {
+      const author: UsersEntity = await this.usersDB.findOne({
+        where: { nickname },
+      });
+
       const postData = {
         ...board,
         post_img: imgUrl,
-        author: writer,
+        author,
       };
 
       await this.boardsDB.insert(postData);
@@ -32,30 +38,26 @@ export class BoardsService {
     }
   }
 
-  async getPost(id: number): Promise<boolean | BoardDto> {
-    const postData: BoardDto = await this.boardsDB.findOne({
-      where: { post_id: id },
-    });
+  async getPost(id: number): Promise<BoardDto> {
+    const postQuery = `SELECT boards.*, Users.nickname FROM boards LEFT JOIN Users ON boards.authorId = Users.id where post_id = ${id};`;
 
-    if (!postData) {
-      return false;
-    }
-
-    return postData;
+    return await this.boardsDB.query(postQuery);
   }
 
-  // 수정 예정
-  // async getAllPost(): Promise<BoardDto> {
-  //   const postData = await this.boardsDB.find({
-  //     select: ['post_id', 'title', 'content', 'updated_at'],
-  //   });
+  async getAllPost(): Promise<BoardDto[]> {
+    const postQuery =
+      'SELECT boards.*, Users.nickname FROM boards LEFT JOIN Users ON boards.authorId = Users.id;';
 
-  //   return post;
-  // }
+    return await this.boardsDB.query(postQuery);
+  }
 
-  // async deletePost(id: number): Promise<boolean> {
-  //   const result = await this.boardsDB.softDelete({ post_id: id });
+  async deletePost(id: number, requestNickname: string): Promise<void> {
+    console.log(id, requestNickname);
 
-  //   console.log(result);
-  // }
+    const deleteQuery = `DELETE FROM boards WHERE post_id = ${id} AND authorId IN (SELECT id FROM Users WHERE nickname = '${requestNickname}')`;
+
+    const result = await this.boardsDB.query(deleteQuery);
+
+    console.log(result);
+  }
 }

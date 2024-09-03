@@ -5,6 +5,7 @@ import {
   CreateDateColumn,
   DeleteDateColumn,
   Entity,
+  ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -32,8 +33,8 @@ export class BoardsEntity extends BaseEntity {
   @Column({ nullable: true })
   post_img: string;
 
-  @Column()
-  author: string;
+  @ManyToOne(() => UsersEntity, (users) => users.boards)
+  author: UsersEntity;
 
   @Column({ default: 0 })
   like: number;

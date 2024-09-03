@@ -8,6 +8,7 @@ import {
   Req,
   Res,
   UploadedFiles,
+  UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
 import { BoardsService } from './boards.service';
@@ -17,6 +18,8 @@ import { Response, Request } from 'express';
 import { UsersService } from 'src/users/users.service';
 import { AwsService } from 'src/aws/aws.service';
 import { FilesInterceptor } from '@nestjs/platform-express';
+import { CookieGuard } from 'src/auth/cookie.guard';
+import { cookieInfoDto } from 'src/users/dto/user.dto';
 
 @Controller('boards')
 export class BoardsController {
@@ -27,83 +30,73 @@ export class BoardsController {
     private readonly awsService: AwsService,
   ) {}
 
-  // @Post('/write')
-  // @UseInterceptors(FilesInterceptor('images'))
-  // async createBoard(
-  //   @UploadedFiles() files: Array<Express.Multer.File>,
-  //   @Body() post: BoardDto,
-  //   @Req() req: Request,
-  //   @Res() res: Response,
-  // ) {
-  //   try {
-  //     console.log('이미지 업로드 요청 get');
-  //     let S3imgLink = '';
+  @Post('/write')
+  @UseGuards(CookieGuard)
+  @UseInterceptors(FilesInterceptor('images'))
+  async createBoard(
+    @UploadedFiles() files: Array<Express.Multer.File>,
+    @Body() post: BoardDto,
+    @Req() req: Request,
+    @Res() res: Response,
+  ) {
+    try {
+      const { nickname } = req.user as cookieInfoDto;
 
-  //     console.log('게시글 업로드 요청', files, post);
-  //     const loginUser = await this.checkUser(req);
+      let S3imgLink = '';
 
-  //     if (!loginUser.result) {
-  //       res.status(401).send({ result: false, msg: '로그인 상태가 아닙니다.' });
-  //       return;
-  //     }
-  //     for (let i = 0; i < files.length; i++) {
-  //       const imgUpload = await this.awsService.imageUploadToS3(files[i]);
+      console.log('게시글 업로드 요청', files, post);
 
-  //       S3imgLink += imgUpload + ',';
-  //     }
+      for (let i = 0; i < files.length; i++) {
+        const imgUpload = await this.awsService.imageUploadToS3(files[i]);
 
-  //     console.log('post_img 컬럼에 들어갈 값', S3imgLink);
+        S3imgLink += imgUpload + ',';
+      }
 
-  //     const createPost = await this.boardService.createBoard(
-  //       req.body,
-  //       S3imgLink,
-  //       loginUser.nickname,
-  //     );
+      console.log('post_img 컬럼에 들어갈 값', S3imgLink);
 
-  //     res.send(createPost);
-  //   } catch (err) {
-  //     throw err;
-  //   }
-  // }
+      const createPost = await this.boardService.createBoard(
+        req.body,
+        S3imgLink,
+        nickname,
+      );
+
+      res.send(createPost);
+    } catch (err) {
+      throw err;
+    }
+  }
 
   @Get(':id')
   async getPost(@Param('id') id: number): Promise<boolean | BoardDto> {
     const postData = await this.boardService.getPost(id);
 
+    console.log(postData);
+
     return postData;
   }
 
-  // 추가 예정 - 전체 게시물 조회
-  // @Get('/')
-  // async getAllPost(): Promise<BoardDto> {
-  //   const post = await this.boardService.getAllPost();
+  @Get('/')
+  async getAllPost(): Promise<void> {
+    const post = await this.boardService.getAllPost();
 
-  //   console.log(post);
-  // }
+    console.log(post);
+  }
 
-  // @Delete(':id')
-  // async DeletePost(
-  //   @Param('id') id: number,
-  //   @Req() req: Request,
-  //   @Res() res: Response,
-  //   @Body('author') author: string,
-  // ): Promise<boolean> {
-  //   try {
-  //     const loginUser = await this.checkUser(req);
+  @Delete(':id')
+  @UseGuards(CookieGuard)
+  async DeletePost(
+    @Param('id') id: number,
+    @Req() req: Request,
+    @Res() res: Response,
+  ): Promise<any> {
+    try {
+      const { nickname } = req.user as cookieInfoDto;
 
-  //     if (!loginUser.result) {
-  //       res.status(401).send({ result: false, msg: '로그인 상태가 아닙니다.' });
-  //       return;
-  //     }
+      const result = await this.boardService.deletePost(id, nickname);
 
-  //     if (author !== loginUser.nickname) {
-  //       res.status(401).send({ result: false, msg: '다른 유저의 글입니다.' });
-  //       return;
-  //     }
-
-  //     const result = await this.boardService.deletePost(id);
-  //   } catch (err) {
-  //     throw err;
-  //   }
-  // }
+      return result;
+    } catch (err) {
+      throw err;
+    }
+  }
 }

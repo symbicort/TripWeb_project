@@ -30,7 +30,7 @@ export class AuthService {
           profile_img,
         });
 
-        await this.userRepository.save(user);
+        user = await this.userRepository.save(user);
       }
 
       const accessToken = this.jwtService.sign(
@@ -42,7 +42,7 @@ export class AuthService {
       );
 
       const refreshToken = this.jwtService.sign(
-        { kakaoID },
+        { userinfo: user.id },
         {
           algorithm: 'HS256',
         },
