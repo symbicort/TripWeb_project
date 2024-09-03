@@ -56,8 +56,6 @@ export class BoardsService {
 
     const deleteQuery = `DELETE FROM boards WHERE post_id = ${id} AND authorId IN (SELECT id FROM Users WHERE nickname = '${requestNickname}')`;
 
-    const result = await this.boardsDB.query(deleteQuery);
-
-    console.log(result);
+    await this.boardsDB.query(deleteQuery);
   }
 }

@@ -68,18 +68,12 @@ export class BoardsController {
 
   @Get(':id')
   async getPost(@Param('id') id: number): Promise<boolean | BoardDto> {
-    const postData = await this.boardService.getPost(id);
-
-    console.log(postData);
-
-    return postData;
+    return this.boardService.getPost(id);
   }
 
   @Get('/')
-  async getAllPost(): Promise<void> {
-    const post = await this.boardService.getAllPost();
-
-    console.log(post);
+  async getAllPost(): Promise<BoardDto[]> {
+    return await this.boardService.getAllPost();
   }
 
   @Delete(':id')
@@ -92,9 +86,9 @@ export class BoardsController {
     try {
       const { nickname } = req.user as cookieInfoDto;
 
-      const result = await this.boardService.deletePost(id, nickname);
+      await this.boardService.deletePost(id, nickname);
 
-      return result;
+      return res.status(200).send();
     } catch (err) {
       throw err;
     }
