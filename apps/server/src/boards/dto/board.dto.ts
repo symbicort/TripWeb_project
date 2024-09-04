@@ -3,7 +3,7 @@ export class BoardDto {
   title: string;
   content: string;
   created_at: Date;
-  post_img: string;
+  post_img: string[];
   author: string;
   like: number;
   comment: number;
@@ -16,7 +16,8 @@ export class createBoardDto {
   author: string;
 }
 
-export class resultBoardDto {
-  result: boolean;
-  msg?: string;
+export class patchPostDto {
+  title: string;
+  content: string;
+  post_img: string[];
 }

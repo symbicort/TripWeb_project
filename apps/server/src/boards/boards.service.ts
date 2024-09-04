@@ -16,7 +16,7 @@ export class BoardsService {
 
   async createBoard(
     board: createBoardDto,
-    imgUrl: string,
+    imgUrl: string[],
     nickname: string,
   ): Promise<any> {
     try {
@@ -41,14 +41,28 @@ export class BoardsService {
   async getPost(id: number): Promise<BoardDto> {
     const postQuery = `SELECT boards.*, Users.nickname FROM boards LEFT JOIN Users ON boards.authorId = Users.id where post_id = ${id};`;
 
-    return await this.boardsDB.query(postQuery);
+    const postData = await this.boardsDB.query(postQuery);
+
+    const imgdata = postData[0].post_img.split(',');
+
+    postData[0].post_img = imgdata;
+
+    return postData;
   }
 
   async getAllPost(): Promise<BoardDto[]> {
     const postQuery =
       'SELECT boards.*, Users.nickname FROM boards LEFT JOIN Users ON boards.authorId = Users.id;';
 
-    return await this.boardsDB.query(postQuery);
+    const postData = await this.boardsDB.query(postQuery);
+
+    for (let i = 0; i < postData.length; i++) {
+      const imgdata = postData[i].post_img.split(',');
+
+      postData[i].post_img = imgdata;
+    }
+
+    return postData;
   }
 
   async deletePost(id: number, requestNickname: string): Promise<void> {

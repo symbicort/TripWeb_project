@@ -4,6 +4,7 @@ import {
   Delete,
   Get,
   Param,
+  Patch,
   Post,
   Req,
   Res,
@@ -13,7 +14,7 @@ import {
 } from '@nestjs/common';
 import { BoardsService } from './boards.service';
 import { ConfigService } from '@nestjs/config';
-import { BoardDto, resultBoardDto } from './dto/board.dto';
+import { BoardDto, patchPostDto } from './dto/board.dto';
 import { Response, Request } from 'express';
 import { UsersService } from 'src/users/users.service';
 import { AwsService } from 'src/aws/aws.service';
@@ -42,14 +43,16 @@ export class BoardsController {
     try {
       const { nickname } = req.user as cookieInfoDto;
 
-      let S3imgLink = '';
+      const S3imgLink: string[] = [];
 
       console.log('게시글 업로드 요청', files, post);
 
       for (let i = 0; i < files.length; i++) {
-        const imgUpload = await this.awsService.imageUploadToS3(files[i]);
+        const imgUpload: string = await this.awsService.imageUploadToS3(
+          files[i],
+        );
 
-        S3imgLink += imgUpload + ',';
+        S3imgLink.push(imgUpload);
       }
 
       console.log('post_img 컬럼에 들어갈 값', S3imgLink);
@@ -82,7 +85,7 @@ export class BoardsController {
     @Param('id') id: number,
     @Req() req: Request,
     @Res() res: Response,
-  ): Promise<any> {
+  ) {
     try {
       const { nickname } = req.user as cookieInfoDto;
 
@@ -92,5 +95,19 @@ export class BoardsController {
     } catch (err) {
       throw err;
     }
+  }
+
+  @Patch(':id')
+  @UseGuards(CookieGuard)
+  @UseInterceptors(FilesInterceptor('images'))
+  async PatchPost(
+    @Param('id') id: number,
+    @Req() req: Request,
+    @Res() res: Response,
+    @Body() body: patchPostDto,
+    @UploadedFiles() files: Array<Express.Multer.File>,
+  ) {
+    console.log(files);
+    console.log(body);
   }
 }

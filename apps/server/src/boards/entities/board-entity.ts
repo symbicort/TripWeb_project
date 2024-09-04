@@ -30,8 +30,8 @@ export class BoardsEntity extends BaseEntity {
   @DeleteDateColumn()
   deleted_at: Date;
 
-  @Column({ nullable: true })
-  post_img: string;
+  @Column('simple-array')
+  post_img: string[];
 
   @ManyToOne(() => UsersEntity, (users) => users.boards)
   author: UsersEntity;
