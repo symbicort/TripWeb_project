@@ -107,7 +107,32 @@ export class BoardsController {
     @Body() body: patchPostDto,
     @UploadedFiles() files: Array<Express.Multer.File>,
   ) {
-    console.log(files);
-    console.log(body);
+    try {
+      const { nickname } = req.user as cookieInfoDto;
+
+      const { title, content } = body;
+
+      const postImg = [];
+
+      for (let i = 0; i < files.length; i++) {
+        const imgUpload: string = await this.awsService.imageUploadToS3(
+          files[i],
+        );
+
+        postImg.push(imgUpload);
+      }
+
+      const result = await this.boardService.patchPost(
+        id,
+        nickname,
+        title,
+        content,
+        postImg,
+      );
+
+      return res.status(200).send();
+    } catch (err) {
+      throw err;
+    }
   }
 }

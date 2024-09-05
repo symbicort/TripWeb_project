@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import {
   DeleteObjectsCommand,
+  HeadObjectCommand,
   PutObjectCommand,
   S3Client,
 } from '@aws-sdk/client-s3';
@@ -27,7 +28,7 @@ export class AwsService {
 
       const command = new PutObjectCommand({
         Bucket: this.configService.get('AWS_S3_BUCKET'),
-        Key: Date.now().toString() + '-' + cleanedFileName,
+        Key: cleanedFileName,
         Body: file.buffer,
         ACL: 'public-read',
         ContentType: file.mimetype,
@@ -35,13 +36,11 @@ export class AwsService {
 
       console.log(command);
 
-      // 생성된 명령을 S3 클라이언트에 전달하여 이미지 업로드를 수행합니다.
       const imgResult = await this.s3Client.send(command);
 
       console.log('이미지 업로드 확인', imgResult);
 
-      // 업로드된 이미지의 URL을 반환합니다.
-      const fileName = command.input.Key; // 업로드된 파일의 Key (경로를 포함한 파일 이름)
+      const fileName = command.input.Key;
       const imageUrl = `https://s3.${process.env.AWS_REGION}.amazonaws.com/${process.env.AWS_S3_BUCKET}/${fileName}`;
 
       console.log('업로드 된 이미지 URL', imageUrl);

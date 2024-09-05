@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { BoardsEntity } from './entities/board-entity';
 import { Repository } from 'typeorm';
@@ -70,6 +70,29 @@ export class BoardsService {
 
     const deleteQuery = `DELETE FROM boards WHERE post_id = ${id} AND authorId IN (SELECT id FROM Users WHERE nickname = '${requestNickname}')`;
 
-    await this.boardsDB.query(deleteQuery);
+    return this.boardsDB.query(deleteQuery);
+  }
+
+  async patchPost(
+    postid: number,
+    nickname: string,
+    title: string,
+    content: string,
+    postImg: string[],
+  ): Promise<void> {
+    try {
+      const postData = await this.getPost(postid);
+
+      if (postData[0].nickname !== nickname) {
+        throw new HttpException('게시글을 작성한 유저가 아닙니다.', 403);
+      }
+
+      await this.boardsDB.update(
+        { post_id: postid },
+        { title, content, post_img: postImg },
+      );
+    } catch (err) {
+      throw err;
+    }
   }
 }
