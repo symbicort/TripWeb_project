@@ -1,10 +1,13 @@
 import { BoardsEntity } from 'src/boards/entities/board-entity';
+import { CommentEntity } from 'src/boards/entities/comment-entity';
 import {
   BaseEntity,
   Column,
   CreateDateColumn,
   DeleteDateColumn,
   Entity,
+  JoinTable,
+  ManyToMany,
   OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
@@ -36,6 +39,19 @@ export class UsersEntity extends BaseEntity {
     cascade: true,
   })
   boards: BoardsEntity[];
+
+  @OneToMany(() => CommentEntity, (comment) => comment.author, {
+    cascade: true,
+  })
+  comments: CommentEntity[];
+
+  @ManyToMany(() => BoardsEntity)
+  @JoinTable({
+    name: 'user_liked_boards',
+    joinColumn: { name: 'user_id', referencedColumnName: 'id' },
+    inverseJoinColumn: { name: 'board_id', referencedColumnName: 'post_id' },
+  })
+  likedBoards: BoardsEntity[];
 
   @Column({ nullable: true })
   refreshToken: string;

@@ -122,17 +122,27 @@ export class BoardsController {
         postImg.push(imgUpload);
       }
 
-      const result = await this.boardService.patchPost(
-        id,
-        nickname,
-        title,
-        content,
-        postImg,
-      );
+      await this.boardService.patchPost(id, nickname, title, content, postImg);
 
       return res.status(200).send();
     } catch (err) {
       throw err;
     }
+  }
+
+  @Post(':id/like')
+  @UseGuards(CookieGuard)
+  async likePost(
+    @Req() req: Request,
+    @Res() res: Response,
+    @Param('id') id: number,
+  ) {
+    const { nickname } = req.user as cookieInfoDto;
+
+    console.log(id, nickname);
+
+    await this.boardService.likePost(id, nickname);
+
+    return res.status(200).send();
   }
 }

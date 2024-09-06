@@ -95,4 +95,19 @@ export class BoardsService {
       throw err;
     }
   }
+
+  async likePost(post_id: number, nickname: string) {
+    try {
+      const user = await this.usersDB.findOne({
+        where: { nickname },
+      });
+      const board = await this.boardsDB.findOne({
+        where: { post_id },
+      });
+
+      console.log(user, board);
+    } catch (err) {
+      throw err;
+    }
+  }
 }

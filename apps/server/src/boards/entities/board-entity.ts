@@ -6,9 +6,11 @@ import {
   DeleteDateColumn,
   Entity,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { CommentEntity } from './comment-entity';
 
 @Entity('boards')
 export class BoardsEntity extends BaseEntity {
@@ -39,6 +41,8 @@ export class BoardsEntity extends BaseEntity {
   @Column({ default: 0 })
   like: number;
 
-  @Column({ default: 0 })
-  comment: number;
+  @OneToMany(() => CommentEntity, (comment) => comment.board, {
+    cascade: true,
+  })
+  comments: CommentEntity[];
 }
