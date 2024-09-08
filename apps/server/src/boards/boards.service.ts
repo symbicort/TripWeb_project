@@ -110,4 +110,6 @@ export class BoardsService {
       throw err;
     }
   }
+
+  async cancelLikePost(post_id: number, nickname: string) {}
 }
