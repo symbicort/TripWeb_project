@@ -137,12 +137,50 @@ export class BoardsController {
     @Res() res: Response,
     @Param('id') id: number,
   ) {
-    const { nickname } = req.user as cookieInfoDto;
+    try {
+      const { nickname } = req.user as cookieInfoDto;
 
-    console.log(id, nickname);
+      await this.boardService.likePost(id, nickname);
 
-    await this.boardService.likePost(id, nickname);
+      return res.status(200).send();
+    } catch (err) {
+      throw err;
+    }
+  }
 
-    return res.status(200).send();
+  @Post(':id/like/cancel')
+  @UseGuards(CookieGuard)
+  async likeCancelPost(
+    @Req() req: Request,
+    @Res() res: Response,
+    @Param('id') id: number,
+  ) {
+    try {
+      const { nickname } = req.user as cookieInfoDto;
+
+      await this.boardService.cancelLikePost(id, nickname);
+
+      return res.status(200).send();
+    } catch (err) {
+      throw err;
+    }
+  }
+
+  @Post(':id/like/check')
+  @UseGuards(CookieGuard)
+  async checkUserLikedPost(
+    @Req() req: Request,
+    @Res() res: Response,
+    @Param('id') id: number,
+  ) {
+    try {
+      const { nickname } = req.user as cookieInfoDto;
+
+      const result = await this.boardService.checkUserLikedPost(id, nickname);
+
+      return res.status(200).send(result);
+    } catch (err) {
+      throw err;
+    }
   }
 }

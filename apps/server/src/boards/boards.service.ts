@@ -100,16 +100,64 @@ export class BoardsService {
     try {
       const user = await this.usersDB.findOne({
         where: { nickname },
+        relations: ['likedBoards'],
       });
       const board = await this.boardsDB.findOne({
         where: { post_id },
       });
 
-      console.log(user, board);
+      user.likedBoards.push(board);
+      user.save();
+
+      board.like += 1;
+      board.save();
+
+      return true;
     } catch (err) {
       throw err;
     }
   }
 
-  async cancelLikePost(post_id: number, nickname: string) {}
+  async cancelLikePost(post_id: number, nickname: string) {
+    try {
+      const user = await this.usersDB.findOne({
+        where: { nickname },
+        relations: ['likedBoards'],
+      });
+      const board = await this.boardsDB.findOne({
+        where: { post_id },
+      });
+
+      user.likedBoards.filter((likeboards) => likeboards.post_id !== post_id);
+      user.save();
+
+      board.like -= 1;
+      board.save();
+
+      return true;
+    } catch (err) {
+      throw err;
+    }
+  }
+
+  async checkUserLikedPost(post_id: number, nickname: string) {
+    try {
+      const user = await this.usersDB.findOne({
+        where: { nickname },
+        relations: ['likedBoards'],
+      });
+
+      let result = false;
+
+      for (let i = 0; i < user.likedBoards.length; i++) {
+        if (Number(user.likedBoards[i].post_id) === Number(post_id)) {
+          result = true;
+        }
+      }
+
+      return result;
+    } catch (err) {
+      throw err;
+    }
+  }
 }
