@@ -1,6 +1,6 @@
 export class createcommentDto {
-  post_id: string;
+  post_id: number;
   content: string;
-  like: number;
   image: string[];
+  parentsId: number | null;
 }

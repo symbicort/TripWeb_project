@@ -38,7 +38,7 @@ export class UsersEntity extends BaseEntity {
   @OneToMany(() => BoardsEntity, (board) => board.author, {
     cascade: true,
   })
-  boards: BoardsEntity[];
+  posts: BoardsEntity[];
 
   @OneToMany(() => CommentEntity, (comment) => comment.author, {
     cascade: true,
@@ -49,7 +49,7 @@ export class UsersEntity extends BaseEntity {
   @JoinTable({
     name: 'user_liked_boards',
     joinColumn: { name: 'user_id', referencedColumnName: 'id' },
-    inverseJoinColumn: { name: 'board_id', referencedColumnName: 'post_id' },
+    inverseJoinColumn: { name: 'board_id', referencedColumnName: 'id' },
   })
   likedBoards: BoardsEntity[];
 

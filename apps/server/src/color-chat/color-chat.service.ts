@@ -1,6 +1,6 @@
 import { GenerativeModelPreview, VertexAI } from '@google-cloud/vertexai';
 import { Injectable } from '@nestjs/common';
-import { ChatRequestDto, chatResultDto } from './color-chat.model';
+import { ChatRequestDto } from './color-chat.model';
 
 @Injectable()
 export class ColorChatService {

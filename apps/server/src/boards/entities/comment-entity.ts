@@ -7,6 +7,7 @@ import {
   Entity,
   PrimaryGeneratedColumn,
   ManyToOne,
+  OneToMany,
 } from 'typeorm';
 import { BoardsEntity } from './board-entity';
 import { UsersEntity } from 'src/users/entities/users-entity';
@@ -14,10 +15,22 @@ import { UsersEntity } from 'src/users/entities/users-entity';
 @Entity('comments')
 export class CommentEntity extends BaseEntity {
   @PrimaryGeneratedColumn()
-  id: string;
+  id: number;
 
-  @ManyToOne(() => BoardsEntity, (board) => board.comments)
-  board: BoardsEntity;
+  @ManyToOne(() => BoardsEntity, (board) => board.comments, {
+    cascade: true,
+  })
+  post: BoardsEntity;
+
+  // 대댓글 부모
+  @ManyToOne(() => CommentEntity, (comment) => comment.children, {
+    onDelete: 'CASCADE',
+    nullable: true,
+  })
+  parent: CommentEntity | null;
+
+  @OneToMany(() => CommentEntity, (comment) => comment.parent)
+  children: CommentEntity[];
 
   @ManyToOne(() => UsersEntity, (user) => user.comments)
   author: UsersEntity;

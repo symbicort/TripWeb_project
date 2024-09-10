@@ -39,7 +39,7 @@ export class BoardsService {
   }
 
   async getPost(id: number): Promise<BoardDto> {
-    const postQuery = `SELECT boards.*, Users.nickname FROM boards LEFT JOIN Users ON boards.authorId = Users.id where post_id = ${id};`;
+    const postQuery = `SELECT boards.*, Users.nickname FROM boards LEFT JOIN Users ON boards.authorId = Users.id where id = ${id};`;
 
     const postData = await this.boardsDB.query(postQuery);
 
@@ -66,9 +66,7 @@ export class BoardsService {
   }
 
   async deletePost(id: number, requestNickname: string): Promise<void> {
-    console.log(id, requestNickname);
-
-    const deleteQuery = `DELETE FROM boards WHERE post_id = ${id} AND authorId IN (SELECT id FROM Users WHERE nickname = '${requestNickname}')`;
+    const deleteQuery = `DELETE FROM boards WHERE id = ${id} AND authorId IN (SELECT id FROM Users WHERE nickname = '${requestNickname}')`;
 
     return this.boardsDB.query(deleteQuery);
   }
@@ -88,7 +86,7 @@ export class BoardsService {
       }
 
       await this.boardsDB.update(
-        { post_id: postid },
+        { id: postid },
         { title, content, post_img: postImg },
       );
     } catch (err) {
@@ -103,7 +101,7 @@ export class BoardsService {
         relations: ['likedBoards'],
       });
       const board = await this.boardsDB.findOne({
-        where: { post_id },
+        where: { id: post_id },
       });
 
       user.likedBoards.push(board);
@@ -125,11 +123,11 @@ export class BoardsService {
         relations: ['likedBoards'],
       });
       const board = await this.boardsDB.findOne({
-        where: { post_id },
+        where: { id: post_id },
       });
 
       user.likedBoards.filter(
-        (likeboards) => likeboards.post_id !== Number(post_id),
+        (likeboards) => likeboards.id !== Number(post_id),
       );
 
       user.save();

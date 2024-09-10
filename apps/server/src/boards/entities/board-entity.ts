@@ -15,7 +15,7 @@ import { CommentEntity } from './comment-entity';
 @Entity('boards')
 export class BoardsEntity extends BaseEntity {
   @PrimaryGeneratedColumn('increment')
-  post_id: number;
+  id: number;
 
   @Column({ type: 'nvarchar', length: 30 })
   title: string;
@@ -35,14 +35,12 @@ export class BoardsEntity extends BaseEntity {
   @Column('simple-array')
   post_img: string[];
 
-  @ManyToOne(() => UsersEntity, (users) => users.boards)
+  @ManyToOne(() => UsersEntity, (users) => users.posts)
   author: UsersEntity;
 
   @Column({ default: 0 })
   like: number;
 
-  @OneToMany(() => CommentEntity, (comment) => comment.board, {
-    cascade: true,
-  })
+  @OneToMany(() => CommentEntity, (comment) => comment.post, {})
   comments: CommentEntity[];
 }
