@@ -23,13 +23,13 @@ export class BoardsEntity extends BaseEntity {
   @Column({ type: 'nvarchar', length: 2000 })
   content: string;
 
-  @CreateDateColumn()
+  @CreateDateColumn({ type: 'timestamp' })
   created_at: Date;
 
-  @UpdateDateColumn()
+  @UpdateDateColumn({ type: 'timestamp' })
   updated_at: Date;
 
-  @DeleteDateColumn()
+  @DeleteDateColumn({ type: 'timestamp' })
   deleted_at: Date;
 
   @Column('simple-array')

@@ -145,20 +145,14 @@ export class BoardsService {
 
   async checkUserLikedPost(post_id: number, nickname: string) {
     try {
-      const user = await this.usersDB.findOne({
-        where: { nickname },
-        relations: ['likedBoards'],
-      });
+      const exists = await this.usersDB
+        .createQueryBuilder('user')
+        .innerJoin('user.likedBoards', 'likedBoard')
+        .where('user.nickname = :nickname', { nickname })
+        .andWhere('likedBoard.post_id = :postId', { postId: post_id })
+        .getOne();
 
-      let result = false;
-
-      for (let i = 0; i < user.likedBoards.length; i++) {
-        if (Number(user.likedBoards[i].post_id) === Number(post_id)) {
-          result = true;
-        }
-      }
-
-      return result;
+      return !!exists;
     } catch (err) {
       throw err;
     }
