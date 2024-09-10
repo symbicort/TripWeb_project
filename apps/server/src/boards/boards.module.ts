@@ -9,6 +9,7 @@ import { UsersEntity } from 'src/users/entities/users-entity';
 import { JwtModule } from '@nestjs/jwt';
 import { CommentService } from './comment/comment.service';
 import { CommentController } from './comment/comment.controller';
+import { CommentEntity } from './entities/comment-entity';
 
 @Module({
   controllers: [BoardsController, CommentController],
@@ -17,7 +18,7 @@ import { CommentController } from './comment/comment.controller';
     JwtModule.register({
       secret: String(process.env.JWT_SECRET_KEY),
     }),
-    TypeOrmModule.forFeature([UsersEntity, BoardsEntity]),
+    TypeOrmModule.forFeature([UsersEntity, BoardsEntity, CommentEntity]),
     AwsModule,
   ],
 })

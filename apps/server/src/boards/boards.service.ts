@@ -128,7 +128,10 @@ export class BoardsService {
         where: { post_id },
       });
 
-      user.likedBoards.filter((likeboards) => likeboards.post_id !== post_id);
+      user.likedBoards.filter(
+        (likeboards) => likeboards.post_id !== Number(post_id),
+      );
+
       user.save();
 
       board.like -= 1;
