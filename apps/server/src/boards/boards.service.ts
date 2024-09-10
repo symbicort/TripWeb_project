@@ -3,14 +3,17 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { BoardsEntity } from './entities/board-entity';
 import { Repository } from 'typeorm';
 import { AwsService } from 'src/aws/aws.service';
-import { BoardDto, createBoardDto } from './dto/board.dto';
+import { BoardDto, createBoardDto, getAllPostDto } from './dto/board.dto';
 import { UsersEntity } from 'src/users/entities/users-entity';
+import { CommentEntity } from './entities/comment-entity';
 
 @Injectable()
 export class BoardsService {
   constructor(
     @InjectRepository(BoardsEntity) private boardsDB: Repository<BoardsEntity>,
     @InjectRepository(UsersEntity) private usersDB: Repository<UsersEntity>,
+    @InjectRepository(CommentEntity)
+    private commentsDB: Repository<CommentEntity>,
     private readonly awsService: AwsService,
   ) {}
 
@@ -38,29 +41,33 @@ export class BoardsService {
     }
   }
 
-  async getPost(id: number): Promise<BoardDto> {
-    const postQuery = `SELECT boards.*, Users.nickname FROM boards LEFT JOIN Users ON boards.authorId = Users.id where id = ${id};`;
+  async getPost(id: number) {
+    const postData = this.boardsDB.findOne({
+      where: { id },
+      relations: ['author'],
+      select: {
+        id: true,
+        title: true,
+        content: true,
+        updated_at: true,
+        post_img: true,
+        like: true,
+        author: {
+          nickname: true,
+        },
+      },
+    });
 
-    const postData = await this.boardsDB.query(postQuery);
-
-    const imgdata = postData[0].post_img.split(',');
-
-    postData[0].post_img = imgdata;
+    console.log(commentData);
 
     return postData;
   }
 
-  async getAllPost(): Promise<BoardDto[]> {
+  async getAllPost(): Promise<getAllPostDto[]> {
     const postQuery =
-      'SELECT boards.*, Users.nickname FROM boards LEFT JOIN Users ON boards.authorId = Users.id;';
+      'SELECT boards.id, boards.title, boards.content, boards.like, Users.nickname FROM boards LEFT JOIN Users ON boards.authorId = Users.id;';
 
     const postData = await this.boardsDB.query(postQuery);
-
-    for (let i = 0; i < postData.length; i++) {
-      const imgdata = postData[i].post_img.split(',');
-
-      postData[i].post_img = imgdata;
-    }
 
     return postData;
   }

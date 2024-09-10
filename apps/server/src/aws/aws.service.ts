@@ -33,14 +33,10 @@ export class AwsService {
         ContentType: file.mimetype,
       });
 
-      console.log(command);
-
       const imgResult = await this.s3Client.send(command);
 
       const fileName = command.input.Key;
       const imageUrl = `https://s3.${process.env.AWS_REGION}.amazonaws.com/${process.env.AWS_S3_BUCKET}/${fileName}`;
-
-      console.log('업로드 된 이미지 URL', imageUrl);
 
       return imageUrl;
     } catch (error) {

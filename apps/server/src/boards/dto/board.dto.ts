@@ -21,3 +21,12 @@ export class patchPostDto {
   content: string;
   post_img: string[];
 }
+
+export class getAllPostDto {
+  id: number;
+  title: string;
+  content: string;
+  post_img: string[];
+  like: number;
+  author: string;
+}

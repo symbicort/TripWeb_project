@@ -14,7 +14,7 @@ import {
 } from '@nestjs/common';
 import { BoardsService } from './boards.service';
 import { ConfigService } from '@nestjs/config';
-import { BoardDto, patchPostDto } from './dto/board.dto';
+import { BoardDto, getAllPostDto, patchPostDto } from './dto/board.dto';
 import { Response, Request } from 'express';
 import { UsersService } from 'src/users/users.service';
 import { AwsService } from 'src/aws/aws.service';
@@ -70,12 +70,12 @@ export class BoardsController {
   }
 
   @Get(':id')
-  async getPost(@Param('id') id: number): Promise<boolean | BoardDto> {
+  async getPost(@Param('id') id: number) {
     return this.boardService.getPost(id);
   }
 
   @Get('/')
-  async getAllPost(): Promise<BoardDto[]> {
+  async getAllPost(): Promise<getAllPostDto[]> {
     return await this.boardService.getAllPost();
   }
 
