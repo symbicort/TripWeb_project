@@ -58,6 +58,7 @@ export class BoardsService {
       },
     });
 
+    // 댓글 포함 select 로직 추가 필요
     console.log(commentData);
 
     return postData;
