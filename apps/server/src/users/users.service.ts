@@ -43,7 +43,7 @@ export class UsersService {
     }
   }
 
-  async updateUserInfo(nickname, newNickname): Promise<any> {
+  async updateUserInfo(nickname: string, newNickname: string): Promise<any> {
     try {
       const result = await this.usersDB.update(
         { nickname },
@@ -58,9 +58,7 @@ export class UsersService {
 
   async withDraw(nickname: string): Promise<void> {
     try {
-      const result = await this.usersDB.softDelete({ nickname });
-
-      console.log(result);
+      await this.usersDB.softDelete({ nickname });
     } catch (err) {
       throw err;
     }

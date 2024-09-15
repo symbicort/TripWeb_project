@@ -1,6 +1,8 @@
 import {
   Body,
   Controller,
+  Delete,
+  Param,
   Post,
   Req,
   Res,
@@ -48,6 +50,22 @@ export class CommentController {
       await this.commentService.createComment(body, nickname);
 
       return res.status(200).send();
+    } catch (err) {
+      throw err;
+    }
+  }
+
+  @Delete(':id')
+  @UseGuards(CookieGuard)
+  async deleteComment(
+    @Req() req: Request,
+    @Res() res: Response,
+    @Param('id') id: number,
+  ) {
+    try {
+      const { nickname } = req.user as cookieInfoDto;
+
+      await this.commentService.deleteComment(id, nickname);
     } catch (err) {
       throw err;
     }

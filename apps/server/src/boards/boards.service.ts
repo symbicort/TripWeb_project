@@ -108,7 +108,7 @@ export class BoardsService {
 
   async getAllPost(): Promise<getAllPostDto[]> {
     const postQuery =
-      'SELECT boards.id, boards.title, boards.content, boards.like, boards.updated_at, Users.nickname FROM boards LEFT JOIN Users ON boards.authorId = Users.id;';
+      'SELECT boards.id, boards.title, boards.content, boards.like, boards.updated_at, Users.nickname FROM boards LEFT JOIN Users ON boards.authorId = Users.id where boards.deleted_at IS NULL;';
 
     const postData = await this.boardsDB.query(postQuery);
 
@@ -116,9 +116,25 @@ export class BoardsService {
   }
 
   async deletePost(id: number, requestNickname: string): Promise<void> {
-    const deleteQuery = `DELETE FROM boards WHERE id = ${id} AND authorId IN (SELECT id FROM Users WHERE nickname = '${requestNickname}')`;
+    try {
+      const postData = await this.boardsDB.findOne({
+        where: { id },
+        relations: ['author'],
+        select: {
+          author: {
+            nickname: true,
+          },
+        },
+      });
 
-    return this.boardsDB.query(deleteQuery);
+      if (postData.author.nickname !== requestNickname) {
+        throw new HttpException('게시글을 작성한 유저가 아닙니다.', 403);
+      }
+
+      await this.boardsDB.softDelete({ id });
+    } catch (err) {
+      throw err;
+    }
   }
 
   async patchPost(

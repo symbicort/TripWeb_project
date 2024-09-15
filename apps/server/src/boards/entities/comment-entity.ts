@@ -51,7 +51,4 @@ export class CommentEntity extends BaseEntity {
 
   @Column({ default: 0 })
   like: number;
-
-  @Column({ default: 0 })
-  depth: number;
 }

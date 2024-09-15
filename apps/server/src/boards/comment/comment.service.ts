@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { HttpException, Injectable, NotFoundException } from '@nestjs/common';
 import { UsersEntity } from 'src/users/entities/users-entity';
 import { Repository } from 'typeorm';
 import { BoardsEntity } from '../entities/board-entity';
@@ -46,6 +46,28 @@ export class CommentService {
       };
 
       await this.commentDB.insert(commentData);
+    } catch (err) {
+      throw err;
+    }
+  }
+
+  async deleteComment(id: number, nickname: string) {
+    try {
+      const commentData = await this.commentDB.findOne({
+        where: { id },
+        relations: ['author'],
+        select: {
+          author: {
+            nickname: true,
+          },
+        },
+      });
+
+      if (commentData.author.nickname !== nickname) {
+        throw new HttpException('댓글을 작성한 유저가 아닙니다.', 403);
+      }
+
+      await this.commentDB.softDelete({ id });
     } catch (err) {
       throw err;
     }
