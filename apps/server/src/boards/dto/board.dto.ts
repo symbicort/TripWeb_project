@@ -27,6 +27,7 @@ export class getAllPostDto {
   title: string;
   content: string;
   post_img: string[];
+  updated_at: Date;
   like: number;
   author: string;
 }

@@ -22,7 +22,6 @@ export class CommentEntity extends BaseEntity {
   })
   post: BoardsEntity;
 
-  // 대댓글 부모
   @ManyToOne(() => CommentEntity, (comment) => comment.children, {
     onDelete: 'CASCADE',
     nullable: true,
@@ -52,4 +51,7 @@ export class CommentEntity extends BaseEntity {
 
   @Column({ default: 0 })
   like: number;
+
+  @Column({ default: 0 })
+  depth: number;
 }

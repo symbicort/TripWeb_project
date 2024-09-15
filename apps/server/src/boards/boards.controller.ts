@@ -110,8 +110,6 @@ export class BoardsController {
     try {
       const { nickname } = req.user as cookieInfoDto;
 
-      const { title, content } = body;
-
       const postImg = [];
 
       for (let i = 0; i < files.length; i++) {
@@ -122,7 +120,9 @@ export class BoardsController {
         postImg.push(imgUpload);
       }
 
-      await this.boardService.patchPost(id, nickname, title, content, postImg);
+      body.post_img = postImg;
+
+      await this.boardService.patchPost(id, nickname, body);
 
       return res.status(200).send();
     } catch (err) {

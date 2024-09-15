@@ -3,7 +3,12 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { BoardsEntity } from './entities/board-entity';
 import { Repository } from 'typeorm';
 import { AwsService } from 'src/aws/aws.service';
-import { BoardDto, createBoardDto, getAllPostDto } from './dto/board.dto';
+import {
+  BoardDto,
+  createBoardDto,
+  getAllPostDto,
+  patchPostDto,
+} from './dto/board.dto';
 import { UsersEntity } from 'src/users/entities/users-entity';
 import { CommentEntity } from './entities/comment-entity';
 
@@ -42,8 +47,9 @@ export class BoardsService {
   }
 
   async getPost(id: number) {
-    const postData = this.boardsDB.findOne({
+    const postData = await this.boardsDB.findOne({
       where: { id },
+      order: { updated_at: 'ASC' },
       relations: ['author'],
       select: {
         id: true,
@@ -58,15 +64,51 @@ export class BoardsService {
       },
     });
 
-    // 댓글 포함 select 로직 추가 필요
-    console.log(postData);
+    const comments = await this.commentsDB.find({
+      where: { post: { id } },
+      relations: ['author', 'parent'],
+      order: { updated_at: 'ASC' },
+      select: {
+        id: true,
+        content: true,
+        created_at: true,
+        comment_img: true,
+        like: true,
+        author: {
+          nickname: true,
+        },
+        parent: {
+          id: true,
+        },
+      },
+    });
+
+    const commentMap = new Map<number, CommentEntity>();
+    const commentData: CommentEntity[] = [];
+
+    comments.forEach((comment) => {
+      comment.children = [];
+      commentMap.set(comment.id, comment);
+    });
+
+    commentMap.forEach((comment) => {
+      if (comment.parent) {
+        const parentComment = commentMap.get(comment.parent.id);
+        parentComment.children.push(comment);
+      } else {
+        commentData.push(comment); // 부모가 없는 경우 루트 댓글로 추가
+      }
+      console.log('데이터 추가되는 과정', commentData);
+    });
+
+    postData.comments = commentData;
 
     return postData;
   }
 
   async getAllPost(): Promise<getAllPostDto[]> {
     const postQuery =
-      'SELECT boards.id, boards.title, boards.content, boards.like, Users.nickname FROM boards LEFT JOIN Users ON boards.authorId = Users.id;';
+      'SELECT boards.id, boards.title, boards.content, boards.like, boards.updated_at, Users.nickname FROM boards LEFT JOIN Users ON boards.authorId = Users.id;';
 
     const postData = await this.boardsDB.query(postQuery);
 
@@ -80,23 +122,30 @@ export class BoardsService {
   }
 
   async patchPost(
-    postid: number,
+    post_id: number,
     nickname: string,
-    title: string,
-    content: string,
-    postImg: string[],
+    patchData: patchPostDto,
   ): Promise<void> {
     try {
-      const postData = await this.getPost(postid);
+      const { title, content, post_img } = patchData;
 
-      if (postData[0].nickname !== nickname) {
+      const postData = await this.boardsDB.findOne({
+        where: { id: post_id },
+        relations: ['author'],
+        select: {
+          author: {
+            nickname: true,
+          },
+        },
+      });
+
+      const reqNickname: string = postData.author.nickname;
+
+      if (reqNickname !== nickname) {
         throw new HttpException('게시글을 작성한 유저가 아닙니다.', 403);
       }
 
-      await this.boardsDB.update(
-        { id: postid },
-        { title, content, post_img: postImg },
-      );
+      this.boardsDB.update({ id: post_id }, { title, content, post_img });
     } catch (err) {
       throw err;
     }
