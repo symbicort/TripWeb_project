@@ -3,6 +3,7 @@ import {
   Controller,
   Delete,
   Param,
+  Patch,
   Post,
   Req,
   Res,
@@ -12,7 +13,7 @@ import {
 } from '@nestjs/common';
 import { FilesInterceptor } from '@nestjs/platform-express/multer';
 import { CookieGuard } from 'src/auth/cookie.guard';
-import { createcommentDto } from '../dto/comment.dto';
+import { createcommentDto, patchCommentDto } from '../dto/comment.dto';
 import { Request, Response } from 'express';
 import { AwsService } from 'src/aws/aws.service';
 import { CommentService } from './comment.service';
@@ -68,6 +69,20 @@ export class CommentController {
       await this.commentService.deleteComment(id, nickname);
     } catch (err) {
       throw err;
+    }
+  }
+
+  @Patch(':id')
+  @UseGuards(CookieGuard)
+  @UseInterceptors(FilesInterceptor('images'))
+  async patchComment(
+    @UploadedFiles() files: Array<Express.Multer.File>,
+    @Req() req: Request,
+    @Body() body: any,
+    @Res() res: Response,
+  ) {
+    try{
+        const {content} = body
     }
   }
 }

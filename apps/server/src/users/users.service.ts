@@ -75,12 +75,7 @@ export class UsersService {
         await this.awsService.deleteImg(user.profile_img);
       }
 
-      const idValid = await this.usersDB.update(
-        { nickname },
-        { profile_img: imageUrl },
-      );
-
-      console.log(idValid);
+      await this.usersDB.update({ nickname }, { profile_img: imageUrl });
     } catch (err) {
       throw err;
     }

@@ -4,3 +4,8 @@ export class createcommentDto {
   image: string[];
   parentsId: number | null;
 }
+
+export class patchCommentDto {
+  comment_img: string[];
+  content: string;
+}
