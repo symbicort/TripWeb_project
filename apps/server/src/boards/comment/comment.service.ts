@@ -4,7 +4,7 @@ import { Repository } from 'typeorm';
 import { BoardsEntity } from '../entities/board-entity';
 import { CommentEntity } from '../entities/comment-entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import { createcommentDto } from '../dto/comment.dto';
+import { createcommentDto, patchCommentDto } from '../dto/comment.dto';
 
 @Injectable()
 export class CommentService {
@@ -72,4 +72,10 @@ export class CommentService {
       throw err;
     }
   }
+
+  async patchComment(
+    id: number,
+    nickname: string,
+    patchData: patchCommentDto,
+  ) {}
 }
