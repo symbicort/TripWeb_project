@@ -81,8 +81,10 @@ export class CommentController {
     @Body() body: any,
     @Res() res: Response,
   ) {
-    try{
-        const {content} = body
+    try {
+      const { content } = body;
+    } catch (err) {
+      throw err;
     }
   }
 }
