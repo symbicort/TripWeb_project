@@ -12,6 +12,7 @@ import { AwsModule } from './aws/aws.module';
 import { ColorChatModule } from './color-chat/color-chat.module';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
+import { ChatModule } from './chat/chat.module';
 
 @Module({
   imports: [
@@ -38,6 +39,7 @@ import { join } from 'path';
     ServeStaticModule.forRoot({
       rootPath: join(__dirname, '../..', 'client', 'dist'),
     }),
+    ChatModule,
   ],
   controllers: [],
   providers: [],
