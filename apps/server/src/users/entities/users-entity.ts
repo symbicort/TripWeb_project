@@ -55,5 +55,4 @@ export class UsersEntity extends BaseEntity {
 
   @Column({ nullable: true })
   refreshToken: string;
-  user: BoardsEntity;
 }

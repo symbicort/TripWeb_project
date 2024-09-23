@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { ChatRoom, ChatRoomDocument } from './schema/chatroom.schema';
 import { Model } from 'mongoose';
@@ -16,19 +16,40 @@ export class ChatService {
     private readonly usersDB: Repository<UsersEntity>,
   ) {}
 
-  async createChatRoom(users: string[]) {
-    const users_id: number[] = [];
+  async findOrCreateDMRoom(users: string[]) {
+    try {
+      const users_id: number[] = [];
 
-    for (let i = 0; i < users.length; i++) {
-      const user = await this.usersDB.findOne({
-        where: { nickname: users[i] },
+      for (let i = 0; i < users.length; i++) {
+        const user = await this.usersDB.findOne({
+          where: { nickname: users[i] },
+        });
+
+        if (!user) {
+          throw new HttpException(`${users[i]} 유저가 존재하지 않습니다.`, 404);
+        }
+
+        users_id.push(user.id);
+      }
+
+      const room = await this.chatRoomModel.find({
+        users: { $all: users_id },
       });
 
-      users_id.push(user.id);
+      if (room) {
+        return String(room[0]._id);
+      }
+
+      const newRoom = new this.chatRoomModel({
+        users: users_id,
+        room_type: 'DM',
+      });
+
+      const result = await newRoom.save();
+
+      return String(result[0]._id);
+    } catch (err) {
+      throw err;
     }
-
-    const result = await this.chatRoomModel.find({ users: { $all: users_id } });
-
-    console.log(result);
   }
 }

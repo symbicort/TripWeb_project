@@ -19,10 +19,12 @@ export class ChatGateway {
     console.log('Client connected:', client.id);
   }
 
-  @SubscribeMessage('join_chat')
+  @SubscribeMessage('join_dm')
   async handleEvent(@MessageBody() data: chatRoomDto): Promise<any> {
     const { users } = data;
 
-    await this.chatService.createChatRoom(users);
+    const roomId = await this.chatService.findOrCreateDMRoom(users);
+
+    console.log('방 아이디', roomId);
   }
 }

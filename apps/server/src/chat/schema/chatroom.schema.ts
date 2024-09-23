@@ -11,6 +11,9 @@ export class ChatRoom {
   @Prop()
   users: number[];
 
+  @Prop()
+  room_type: string;
+
   @Prop({ default: Date.now })
   created_at: Date;
 }
