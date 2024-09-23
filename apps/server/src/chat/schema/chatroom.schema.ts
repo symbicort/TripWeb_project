@@ -3,7 +3,7 @@ import { HydratedDocument } from 'mongoose';
 
 export type ChatRoomDocument = HydratedDocument<ChatRoom>;
 
-@Schema()
+@Schema({ collection: 'chatrooms' })
 export class ChatRoom {
   @Prop()
   name: string;
@@ -15,4 +15,4 @@ export class ChatRoom {
   created_at: Date;
 }
 
-export const CatSchema = SchemaFactory.createForClass(ChatRoom);
+export const ChatRoomSchema = SchemaFactory.createForClass(ChatRoom);

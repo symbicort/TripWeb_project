@@ -6,6 +6,7 @@ import {
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
 import { ChatService } from './chat.service';
+import { chatRoomDto } from './dto/chatroom.dto';
 
 @WebSocketGateway(4000, { cors: { origin: '*' } })
 export class ChatGateway {
@@ -18,14 +19,10 @@ export class ChatGateway {
     console.log('Client connected:', client.id);
   }
 
-  @SubscribeMessage('chat')
-  handleEvent(@MessageBody() data): string {
-    console.log('채팅 요청 데이터', data.chat);
-    this.server.emit('response', {
-      message: 'Event received',
-      event: 'response',
-      data,
-    });
-    return data;
+  @SubscribeMessage('join_chat')
+  async handleEvent(@MessageBody() data: chatRoomDto): Promise<any> {
+    const { users } = data;
+
+    await this.chatService.createChatRoom(users);
   }
 }
