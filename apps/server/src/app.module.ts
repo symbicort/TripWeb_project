@@ -13,6 +13,7 @@ import { ColorChatModule } from './color-chat/color-chat.module';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
 import { ChatModule } from './chat/chat.module';
+import { MongooseModule } from '@nestjs/mongoose';
 
 @Module({
   imports: [
@@ -40,6 +41,7 @@ import { ChatModule } from './chat/chat.module';
       rootPath: join(__dirname, '../..', 'client', 'dist'),
     }),
     ChatModule,
+    MongooseModule.forRoot(String(process.env.MONGODB_URL)),
   ],
   controllers: [],
   providers: [],

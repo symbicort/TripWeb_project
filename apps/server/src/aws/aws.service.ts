@@ -35,6 +35,8 @@ export class AwsService {
 
       const imgResult = await this.s3Client.send(command);
 
+      console.log('이미지 등록 결과 테스트', imgResult);
+
       const fileName = command.input.Key;
       const imageUrl = `https://s3.${process.env.AWS_REGION}.amazonaws.com/${process.env.AWS_S3_BUCKET}/${fileName}`;
 
