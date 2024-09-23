@@ -3,6 +3,7 @@ import {
   SubscribeMessage,
   MessageBody,
   WebSocketServer,
+  ConnectedSocket,
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
 import { ChatService } from './chat.service';
@@ -20,11 +21,17 @@ export class ChatGateway {
   }
 
   @SubscribeMessage('join_dm')
-  async handleEvent(@MessageBody() data: chatRoomDto): Promise<any> {
+  async handleEvent(
+    @MessageBody() data: chatRoomDto,
+    @ConnectedSocket() client: Socket,
+  ): Promise<any> {
     const { users } = data;
 
     const roomId = await this.chatService.findOrCreateDMRoom(users);
 
-    console.log('방 아이디', roomId);
+    client.join(roomId);
+    this.server.to(roomId).emit('user_joined', '유저가 참가했습니다.');
+
+    client.emit('room_id', { roomId });
   }
 }
