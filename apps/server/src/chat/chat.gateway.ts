@@ -21,10 +21,10 @@ export class ChatGateway {
   }
 
   @SubscribeMessage('join_dm')
-  async handleEvent(
+  async joinRoomforDm(
     @MessageBody() data: chatRoomDto,
     @ConnectedSocket() client: Socket,
-  ): Promise<any> {
+  ) {
     const { users } = data;
 
     const roomId = await this.chatService.findOrCreateDMRoom(users);
@@ -32,6 +32,15 @@ export class ChatGateway {
     client.join(roomId);
     this.server.to(roomId).emit('user_joined', '유저가 참가했습니다.');
 
+    console.log(roomId);
     client.emit('room_id', { roomId });
+  }
+
+  @SubscribeMessage('send_chat')
+  async sendChat(
+    @MessageBody() data: chatRoomDto,
+    @ConnectedSocket() client: Socket,
+  ) {
+    console.log(client.rooms);
   }
 }
