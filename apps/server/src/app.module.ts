@@ -1,11 +1,11 @@
 import { Module } from '@nestjs/common';
 import { UserModule } from './users/users.module';
-import { BoardsModule } from './boards/boards.module';
+import { BoardsModule } from './board/boards.module';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { BoardsEntity } from './boards/entities/board-entity';
+import { BoardsEntity } from './board/entities/board-entity';
 import { UsersEntity } from './users/entities/users-entity';
-import { CommentEntity } from './boards/entities/comment-entity';
+import { CommentEntity } from './board/entities/comment-entity';
 import { AuthModule } from './auth/auth.module';
 // import { RedisModule } from '@liaoliaots/nestjs-redis';
 import { AwsModule } from './aws/aws.module';

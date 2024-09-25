@@ -48,7 +48,11 @@ export class UsersController {
     try {
       const user = req.user as cookieInfoDto;
 
-      return res.status(200).json({ nickname: user.userinfo });
+      const nickname = await this.userService.getNicknameFromUserId(
+        user.userinfo,
+      );
+
+      return res.status(200).json({ nickname });
     } catch (err) {
       throw err;
     }

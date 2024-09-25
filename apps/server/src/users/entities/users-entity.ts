@@ -1,5 +1,5 @@
-import { BoardsEntity } from 'src/boards/entities/board-entity';
-import { CommentEntity } from 'src/boards/entities/comment-entity';
+import { BoardsEntity } from 'src/board/entities/board-entity';
+import { CommentEntity } from 'src/board/entities/comment-entity';
 import {
   BaseEntity,
   Column,
