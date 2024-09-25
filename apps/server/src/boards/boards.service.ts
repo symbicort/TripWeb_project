@@ -25,11 +25,11 @@ export class BoardsService {
   async createBoard(
     board: createBoardDto,
     imgUrl: string[],
-    nickname: string,
+    user_id: number,
   ): Promise<any> {
     try {
       const author: UsersEntity = await this.usersDB.findOne({
-        where: { nickname },
+        where: { id: user_id },
       });
 
       const postData = {
@@ -96,7 +96,7 @@ export class BoardsService {
         const parentComment = commentMap.get(comment.parent.id);
         parentComment.children.push(comment);
       } else {
-        commentData.push(comment); // 부모가 없는 경우 루트 댓글로 추가
+        commentData.push(comment);
       }
       console.log('데이터 추가되는 과정', commentData);
     });
@@ -115,19 +115,19 @@ export class BoardsService {
     return postData;
   }
 
-  async deletePost(id: number, requestNickname: string): Promise<void> {
+  async deletePost(id: number, user_id: number): Promise<void> {
     try {
       const postData = await this.boardsDB.findOne({
         where: { id },
         relations: ['author'],
         select: {
           author: {
-            nickname: true,
+            id: true,
           },
         },
       });
 
-      if (postData.author.nickname !== requestNickname) {
+      if (postData.author.id !== user_id) {
         throw new HttpException('게시글을 작성한 유저가 아닙니다.', 403);
       }
 
@@ -139,7 +139,7 @@ export class BoardsService {
 
   async patchPost(
     post_id: number,
-    nickname: string,
+    user_id: number,
     patchData: patchPostDto,
   ): Promise<void> {
     try {
@@ -150,14 +150,14 @@ export class BoardsService {
         relations: ['author'],
         select: {
           author: {
-            nickname: true,
+            id: true,
           },
         },
       });
 
-      const reqNickname: string = postData.author.nickname;
+      const reqUserId: number = postData.author.id;
 
-      if (reqNickname !== nickname) {
+      if (reqUserId !== user_id) {
         throw new HttpException('게시글을 작성한 유저가 아닙니다.', 403);
       }
 
@@ -167,10 +167,10 @@ export class BoardsService {
     }
   }
 
-  async likePost(post_id: number, nickname: string) {
+  async likePost(post_id: number, user_id: number) {
     try {
       const user = await this.usersDB.findOne({
-        where: { nickname },
+        where: { id: user_id },
         relations: ['likedBoards'],
       });
       const board = await this.boardsDB.findOne({
@@ -189,10 +189,10 @@ export class BoardsService {
     }
   }
 
-  async cancelLikePost(post_id: number, nickname: string) {
+  async cancelLikePost(post_id: number, user_id: number) {
     try {
       const user = await this.usersDB.findOne({
-        where: { nickname },
+        where: { id: user_id },
         relations: ['likedBoards'],
       });
       const board = await this.boardsDB.findOne({
@@ -214,12 +214,12 @@ export class BoardsService {
     }
   }
 
-  async checkUserLikedPost(post_id: number, nickname: string) {
+  async checkUserLikedPost(post_id: number, user_id: number) {
     try {
       const exists = await this.usersDB
         .createQueryBuilder('user')
         .innerJoin('user.likedBoards', 'likedBoard')
-        .where('user.nickname = :nickname', { nickname })
+        .where('user.nickname = :nickname', { id: user_id })
         .andWhere('likedBoard.post_id = :postId', { postId: post_id })
         .getOne();
 

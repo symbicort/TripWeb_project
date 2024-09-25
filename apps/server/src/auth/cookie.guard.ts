@@ -6,12 +6,16 @@ import {
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { Request } from 'express';
+import { UsersService } from 'src/users/users.service';
 
 @Injectable()
 export class CookieGuard implements CanActivate {
-  constructor(private readonly jwtService: JwtService) {}
+  constructor(
+    private readonly jwtService: JwtService,
+    private readonly usersService: UsersService,
+  ) {}
 
-  canActivate(context: ExecutionContext): boolean {
+  async canActivate(context: ExecutionContext): Promise<boolean> {
     const request: Request = context.switchToHttp().getRequest();
 
     const token = request.cookies['userinfo'];
@@ -21,12 +25,12 @@ export class CookieGuard implements CanActivate {
     }
 
     try {
-      const nickname = this.jwtService.verify(token);
-      request.user = nickname;
+      const tokenInfo = await this.jwtService.verify(token);
+
+      request.user = tokenInfo;
 
       return true;
     } catch (err) {
-      console.error(err);
       throw new Error(err);
     }
   }

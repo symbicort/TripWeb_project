@@ -5,6 +5,7 @@ import { BoardsEntity } from '../entities/board-entity';
 import { CommentEntity } from '../entities/comment-entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { createcommentDto, patchCommentDto } from '../dto/comment.dto';
+import { numBytes } from 'aws-sdk/clients/finspace';
 
 @Injectable()
 export class CommentService {
@@ -15,10 +16,10 @@ export class CommentService {
     @InjectRepository(UsersEntity) private usersDB: Repository<UsersEntity>,
   ) {}
 
-  async createComment(data: createcommentDto, nickname: string) {
+  async createComment(data: createcommentDto, user_id: number) {
     try {
       const author = await this.usersDB.findOne({
-        where: { nickname },
+        where: { id: user_id },
       });
 
       const post = await this.boardDB.findOne({
@@ -51,7 +52,7 @@ export class CommentService {
     }
   }
 
-  async deleteComment(id: number, nickname: string) {
+  async deleteComment(id: number, user_id: number) {
     try {
       const commentData = await this.commentDB.findOne({
         where: { id },
@@ -63,7 +64,7 @@ export class CommentService {
         },
       });
 
-      if (commentData.author.nickname !== nickname) {
+      if (commentData.author.id !== user_id) {
         throw new HttpException('댓글을 작성한 유저가 아닙니다.', 403);
       }
 
@@ -73,9 +74,5 @@ export class CommentService {
     }
   }
 
-  async patchComment(
-    id: number,
-    nickname: string,
-    patchData: patchCommentDto,
-  ) {}
+  async patchComment(id: number, user_id: number, patchData: patchCommentDto) {}
 }

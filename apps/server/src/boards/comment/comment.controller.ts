@@ -36,7 +36,7 @@ export class CommentController {
     @Res() res: Response,
   ) {
     try {
-      const { nickname } = req.user as cookieInfoDto;
+      const { userinfo } = req.user as cookieInfoDto;
 
       const imageLink: string[] = [];
 
@@ -48,7 +48,7 @@ export class CommentController {
 
       body.image = imageLink;
 
-      await this.commentService.createComment(body, nickname);
+      await this.commentService.createComment(body, userinfo);
 
       return res.status(200).send();
     } catch (err) {
@@ -64,9 +64,9 @@ export class CommentController {
     @Param('id') id: number,
   ) {
     try {
-      const { nickname } = req.user as cookieInfoDto;
+      const { userinfo } = req.user as cookieInfoDto;
 
-      await this.commentService.deleteComment(id, nickname);
+      await this.commentService.deleteComment(id, userinfo);
     } catch (err) {
       throw err;
     }
@@ -80,9 +80,12 @@ export class CommentController {
     @Req() req: Request,
     @Body() body: any,
     @Res() res: Response,
+    @Param('id') id: number,
   ) {
     try {
-      const { content } = body;
+      const { userinfo } = req.user as cookieInfoDto;
+
+      const result = await this.commentService.patchComment(id, userinfo, body);
     } catch (err) {
       throw err;
     }

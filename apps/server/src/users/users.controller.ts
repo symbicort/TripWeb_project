@@ -48,7 +48,7 @@ export class UsersController {
     try {
       const user = req.user as cookieInfoDto;
 
-      return res.status(200).json({ nickname: user.nickname });
+      return res.status(200).json({ nickname: user.userinfo });
     } catch (err) {
       throw err;
     }
@@ -60,7 +60,7 @@ export class UsersController {
     try {
       const user = req.user as cookieInfoDto;
 
-      const userInfo = await this.userService.getUserInfo(user.nickname);
+      const userInfo = await this.userService.getUserInfo(user.userinfo);
 
       return res.status(200).send(userInfo);
     } catch (err) {
@@ -76,10 +76,12 @@ export class UsersController {
     @Res() res: Response,
   ): Promise<void> {
     try {
-      const { nickname } = req.user as cookieInfoDto;
+      const { userinfo } = req.user as cookieInfoDto;
       const newNickname = body.nickname;
 
-      await this.userService.updateUserInfo(nickname, newNickname);
+      console.log(req.user);
+
+      await this.userService.updateUserInfo(userinfo, newNickname);
 
       res.clearCookie('userinfo');
 
@@ -93,11 +95,11 @@ export class UsersController {
   @UseGuards(CookieGuard)
   async withDraw(@Req() req: Request, @Res() res: Response): Promise<void> {
     try {
-      const { nickname } = req.user as cookieInfoDto;
+      const { userinfo } = req.user as cookieInfoDto;
 
       res.clearCookie('userinfo');
 
-      await this.userService.withDraw(nickname);
+      await this.userService.withDraw(userinfo);
 
       res.status(200).send();
     } catch (err) {
@@ -114,11 +116,11 @@ export class UsersController {
     @Res() res: Response,
   ): Promise<void> {
     try {
-      const { nickname } = req.user as cookieInfoDto;
+      const { userinfo } = req.user as cookieInfoDto;
 
       const imageUrl = await this.awsService.imageUploadToS3(file);
 
-      await this.userService.uploadImg(nickname, imageUrl);
+      await this.userService.uploadImg(userinfo, imageUrl);
 
       res.send({ result: true });
     } catch (error) {

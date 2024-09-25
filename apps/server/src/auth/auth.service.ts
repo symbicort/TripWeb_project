@@ -34,7 +34,7 @@ export class AuthService {
       }
 
       const accessToken = this.jwtService.sign(
-        { nickname },
+        { userinfo: user.id },
         {
           expiresIn: '2h',
           algorithm: 'HS256',
@@ -69,7 +69,7 @@ export class AuthService {
     }
 
     const accessToken = this.jwtService.sign(
-      { nickname: user.nickname },
+      { userinfo: user.id },
       {
         expiresIn: '2h',
         algorithm: 'HS256',

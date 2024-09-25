@@ -42,6 +42,6 @@ export class userInfoDto {
 }
 
 export class cookieInfoDto {
-  nickname: string;
+  userinfo: number;
   iat: number;
 }

@@ -14,6 +14,18 @@ export class UsersService {
     private readonly awsService: AwsService,
   ) {}
 
+  async getNicknameFromUserId(id: number): Promise<string> {
+    try {
+      const user = await this.usersDB.findOne({
+        where: { id },
+      });
+
+      return user.nickname;
+    } catch (err) {
+      throw err;
+    }
+  }
+
   async checkDupNickname(inputNickname: string): Promise<boolean> {
     try {
       const result = await this.usersDB.count({
@@ -31,10 +43,10 @@ export class UsersService {
     }
   }
 
-  async getUserInfo(nickname: string): Promise<userInfoDto> {
+  async getUserInfo(id: number): Promise<userInfoDto> {
     try {
       const userInfo = await this.usersDB.findOne({
-        where: { nickname },
+        where: { id },
       });
 
       return new userInfoDto(userInfo);
@@ -43,10 +55,10 @@ export class UsersService {
     }
   }
 
-  async updateUserInfo(nickname: string, newNickname: string): Promise<any> {
+  async updateUserInfo(id: number, newNickname: string): Promise<any> {
     try {
       const result = await this.usersDB.update(
-        { nickname },
+        { id },
         { nickname: newNickname, isDefault: false },
       );
 
@@ -56,18 +68,18 @@ export class UsersService {
     }
   }
 
-  async withDraw(nickname: string): Promise<void> {
+  async withDraw(id: number): Promise<void> {
     try {
-      await this.usersDB.softDelete({ nickname });
+      await this.usersDB.softDelete({ id });
     } catch (err) {
       throw err;
     }
   }
 
-  async uploadImg(nickname: string, imageUrl: string): Promise<void> {
+  async uploadImg(user_id: number, imageUrl: string): Promise<void> {
     try {
       const user = await this.usersDB.findOne({
-        where: { nickname },
+        where: { id: user_id },
       });
 
       if (!user.profile_img.includes('kakaocdn')) {
@@ -75,7 +87,7 @@ export class UsersService {
         await this.awsService.deleteImg(user.profile_img);
       }
 
-      await this.usersDB.update({ nickname }, { profile_img: imageUrl });
+      await this.usersDB.update({ id: user_id }, { profile_img: imageUrl });
     } catch (err) {
       throw err;
     }

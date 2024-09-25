@@ -41,7 +41,7 @@ export class BoardsController {
     @Res() res: Response,
   ) {
     try {
-      const { nickname } = req.user as cookieInfoDto;
+      const { userinfo } = req.user as cookieInfoDto;
 
       const S3imgLink: string[] = [];
 
@@ -60,7 +60,7 @@ export class BoardsController {
       const createPost = await this.boardService.createBoard(
         req.body,
         S3imgLink,
-        nickname,
+        userinfo,
       );
 
       res.send(createPost);
@@ -87,9 +87,9 @@ export class BoardsController {
     @Res() res: Response,
   ) {
     try {
-      const { nickname } = req.user as cookieInfoDto;
+      const { userinfo } = req.user as cookieInfoDto;
 
-      await this.boardService.deletePost(id, nickname);
+      await this.boardService.deletePost(id, userinfo);
 
       return res.status(200).send();
     } catch (err) {
@@ -108,7 +108,7 @@ export class BoardsController {
     @UploadedFiles() files: Array<Express.Multer.File>,
   ) {
     try {
-      const { nickname } = req.user as cookieInfoDto;
+      const { userinfo } = req.user as cookieInfoDto;
 
       const postImg = [];
 
@@ -122,7 +122,7 @@ export class BoardsController {
 
       body.post_img = postImg;
 
-      await this.boardService.patchPost(id, nickname, body);
+      await this.boardService.patchPost(id, userinfo, body);
 
       return res.status(200).send();
     } catch (err) {
@@ -138,9 +138,9 @@ export class BoardsController {
     @Param('id') id: number,
   ) {
     try {
-      const { nickname } = req.user as cookieInfoDto;
+      const { userinfo } = req.user as cookieInfoDto;
 
-      await this.boardService.likePost(id, nickname);
+      await this.boardService.likePost(id, userinfo);
 
       return res.status(200).send();
     } catch (err) {
@@ -156,9 +156,9 @@ export class BoardsController {
     @Param('id') id: number,
   ) {
     try {
-      const { nickname } = req.user as cookieInfoDto;
+      const { userinfo } = req.user as cookieInfoDto;
 
-      await this.boardService.cancelLikePost(id, nickname);
+      await this.boardService.cancelLikePost(id, userinfo);
 
       return res.status(200).send();
     } catch (err) {
@@ -174,9 +174,9 @@ export class BoardsController {
     @Param('id') id: number,
   ) {
     try {
-      const { nickname } = req.user as cookieInfoDto;
+      const { userinfo } = req.user as cookieInfoDto;
 
-      const result = await this.boardService.checkUserLikedPost(id, nickname);
+      const result = await this.boardService.checkUserLikedPost(id, userinfo);
 
       return res.status(200).send(result);
     } catch (err) {
